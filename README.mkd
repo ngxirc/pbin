@@ -19,6 +19,8 @@ conf/settings.cfg::
     root_path=.
     relay_chan=#channel
     relay_admin_chan=#channel-ops
-    bot_port=1010
+    relay_host=localhost
+    relay_port=4040
+    mollom_pub_key=ABC
+    mollom_priv_key=XYZ
     python_server=auto
-

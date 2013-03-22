@@ -9,6 +9,7 @@ except:
 import redis
 from hashlib import sha1
 import ConfigParser
+import Mollom
 from bottle import *
 
 app = Bottle()
@@ -23,6 +24,8 @@ conf = ConfigParser.SafeConfigParser({
     'root_path': '.',
     'relay_chan': None,
     'relay_admin_chan': None,
+    'mollom_pub_key': None,
+    'mollom_priv_key': None,
     'python_server': 'auto'})
 conf.read('conf/settings.cfg')
 
@@ -83,6 +86,20 @@ def show_about():
     """
     return jinja2_template("about.html")
 
+
+def spam_check(content):
+    mollom_api = Mollom.MollomAPI(
+        publicKey=conf.get('bottle', 'mollom_pub_key'),
+        privateKey=conf.get('bottle', 'mollom_priv_key'))
+    if not mollom_api.verifyKey():
+        raise Mollom.MollomFault('Invalid Mollom Keys')
+
+    cc = mollom_api.checkContent(postBody=content)
+    # cc['spam']: 1 for ham, 2 for spam, 3 for unsure;
+    # http://mollom.com/blog/spam-vs-ham
+    if cc['spam'] == 2:
+        return True
+    return False
 
 class StripPathMiddleware(object):
     """
