@@ -68,9 +68,9 @@ def submit_paste():
         'code': request.POST.get('code', '').strip(),
         'title': request.POST.get('title', '').strip(),
         'name': request.POST.get('name', '').strip(),
-        'private': request.POST.get('private', '').strip(),
+        'private': request.POST.get('private', '0').strip(),
         'lang': request.POST.get('lang', '').strip(),
-        'expire': request.POST.get('expire', '').strip()}
+        'expire': request.POST.get('expire', '0').strip()}
 
     if not spam_free(paste['code']):
         return jinja2_template('spam.html')
@@ -82,7 +82,7 @@ def submit_paste():
     # Public pastes should have an easy to type key
     # Private pastes should have a more secure key
     id_length = 2
-    if paste['private'] == 1:
+    if int(paste['private']) == 1:
         id_length = 8
 
     # Pick a unique ID
