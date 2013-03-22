@@ -75,8 +75,8 @@ def submit_paste():
     if not spam_free(paste['code']):
         return jinja2_template('spam.html')
 
-    # These are the only times that can be used for expiration
-    if int(paste['expire']) not in [30, 60, 360, 720, 1440, 10080, 40320]:
+    # The expiration limits need to be enforced
+    if not 30 <= int(paste['expire']) <= 40320:
         redirect('/')
 
     # Public pastes should have an easy to type key
@@ -90,7 +90,8 @@ def submit_paste():
 
     # Make sure it's actually unique or else create a new one and test again
     while cache.exists(paste_id):
-        paste_id = binascii.b2a_hex(os.urandom(id_length + 2))
+        id_length += 1
+        paste_id = binascii.b2a_hex(os.urandom(id_length))
 
     cache.set(paste_id, json.dumps(paste))
     cache.expire(paste_id, int(paste['expire']) * 60)
@@ -205,4 +206,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
