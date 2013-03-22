@@ -1,0 +1,69 @@
+/**
+ * Layout
+ */
+
+body {
+  background-color: #e8ecef;
+  color: #000000;
+  font: 100%/1.5 "ff-meta-web-pro-1","ff-meta-web-pro-2",Arial,"Helvetica Neue",sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+#header {
+  background-color: #465158;
+  font-size: 0.8em;
+  width: 100%;
+  min-width: 800px;
+  height: 3em;
+  padding-top: 0.4em;
+}
+
+#header a {
+  color: #ffffff;
+  font-weight: bold;
+  line-height: 2.4em;
+  vertical-align: center;
+  padding: 0.4em 0.8em;
+}
+
+#menu {
+  float: right;
+  list-style: none outside none;
+  line-height: 2.5em;
+  margin: 0;
+  padding: 0 0 0 10px;
+}
+
+#menu a {
+  background-color: #697983;
+  border: medium none;
+  border-radius: 3px 3px 3px 3px;
+  margin: 0.375em 0;
+  text-shadow: 0 1px rgba(0, 0, 0, 0.5);
+}
+
+#menu li {
+  float: right;
+  padding-right: 10px;
+}
+
+#content {
+  padding: 20px;
+  width: 700px;
+}
+
+#content td:first-child {
+  text-align: right;
+}
+
+.note {
+  background: none repeat scroll 0 0 #9999aa;
+  color: #f7f7f7;
+  padding: 12px;
+  margin-top: 50px;
+}
+
+.note a {
+  color: #ffffff;
+}

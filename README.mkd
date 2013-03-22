@@ -25,3 +25,10 @@ conf/settings.cfg::
     mollom_pub_key=ABC
     mollom_priv_key=XYZ
     python_server=auto
+
+Credits
+-------
+
+Originally written by Michael Lustfield (MTecknology).
+
+Theme concepts taken from readthedocs.org and dpaste.com.

@@ -1,5 +1,37 @@
 {% extends 'base.html' %}
 
 {% block body %}
-  Exciting information about this website.
+  <h3>Overview</h3>
+  This site is a tool that Ngx CC uses for helping users in the #nginx IRC
+  channel on freenode. It allows users to paste configuration files and other
+  pieces of data to allow us to help them.
+
+  <h3>The Difference</h3>
+  We created yet another pastebin service because we needed something that fit
+  our needs better. We couldn't find something that we liked, so we started
+  from scratch.
+
+  This service:
+  <ul>
+    <li>Integrates with the #nginx IRC channel</li>
+    <li>Offers relevant syntax hilighting options</li>
+    <li>Automatic expiration of data</li>
+    <li>Has cookie based personal defaults</li>
+    <li>Includes an IRC Nick option</li>
+    <li>Provides a private paste option</li>
+    <li>Blocks spam!</li>
+    <li>More...</li>
+  </ul>
+
+  <h3>Private Pastes</h3>
+  The private paste is not 100% private. The paste link will still be relayed
+  to the admin (not public) IRC channel. The link generated will be longer in
+  order to prevent people from stumbling across your paste. The private paste
+  option also prevents the <a href="/recent">Recent</a> page from listing your
+  paste.
+
+  <p class="note">
+    If you have any questions or concerns about this, please check out the
+    <a href="https://github.com/ngx/pbin">project page</a>.
+
 {% endblock %}

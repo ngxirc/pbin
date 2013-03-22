@@ -1,51 +1,68 @@
 {% extends 'base.html' %}
 
 {% block body %}
-  <form action="/" method="post">
-    <label for="name">IRC Nick</label>
-    <input type="text" name="name" value="" id="name" maxlength="32" tabindex="1" />
-    <br />
-    <label for="title">Title</label>
-    <input value="" type="text" id="title" name="title" tabindex="2" maxlength="32" />
-    <br />
-    <label for="lang">Language</label>
-    <select name="lang" id="lang" class="select" tabindex="3">
-      <option value="nginx">Nginx Config</option>
-      <option value="html">HTML</option>
-      <option value="text">Plain Text</option>
-      <option value="0">-----------------</option>
-      <option value="apache">Apache</option>
-      <option value="bash">Bash</option>
-      <option value="c">C</option>
-      <option value="css">CSS</option>
-      <option value="javascript">JavaScript</option>
-      <option value="lua">Lua</option>
-      <option value="mysql">MySQL</option>
-      <option value="pcre">PCRE</option>
-      <option value="php">PHP</option>
-      <option value="postgresql">PostgreSQL</option>
-      <option value="python">Python</option>
-      <option value="ruby">Ruby</option>
-      <option value="sql">SQL</option>
-      <option value="xml">XML</option>
-    </select>
-    <br />
-    <label for="code">Your paste</label>
-    <textarea id="code" name="code" cols="40" rows="20" tabindex="4"></textarea>
-    <br />
-    <label class="check" for="private">Private</label>
-    <input type="checkbox" name="private" value="1" id="private" tabindex="6"  />
-    <br />
-    <label for="expire">Delete After</label>
-    <select name="expire" id="expire" class="select" tabindex="7">
-      <option value="30">30 Minutes</option>
-      <option value="60">1 hour</option>
-      <option value="360">6 Hours</option>
-      <option value="720">12 Hours</option>
-      <option value="1440" selected="selected">1 Day</option>
-      <option value="10080">1 Week</option>
-      <option value="40320">4 Weeks</option>
-    </select>
-    <button type="submit" value="submit" name="submit">Create</button>
-  </form>
+  <form action="/" method="post"><table><tbody>
+    <tr>
+      <td>
+        <label for="title">Title</label>
+      </td>
+      <td>
+        <input value="" type="text" id="title" name="title" tabindex="2" maxlength="32" />
+      </td>
+      <td>
+        <label for="name">IRC Nick</label>
+      </td>
+      <td colspan="2">
+        <input type="text" name="name" value="" id="name" maxlength="32" tabindex="1" />
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="code">Code</label>
+      </td>
+      <td colspan="4">
+        <textarea id="code" name="code" cols="60" rows="20" tabindex="4"></textarea>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="lang">Syntax</label>
+      </td>
+      <td>
+        <select name="lang" id="lang" class="select" tabindex="3">
+          <option value="nginx">Nginx Config</option>
+          <option value="html">HTML</option>
+          <option value="text">Plain Text</option>
+          <option value="0">-----------------</option>
+          <option value="apache">Apache</option>
+          <option value="bash">Bash</option>
+          <option value="c">C</option>
+          <option value="css">CSS</option>
+          <option value="javascript">JavaScript</option>
+          <option value="lua">Lua</option>
+          <option value="mysql">MySQL</option>
+          <option value="pcre">PCRE</option>
+          <option value="php">PHP</option>
+          <option value="postgresql">PostgreSQL</option>
+          <option value="python">Python</option>
+          <option value="ruby">Ruby</option>
+          <option value="sql">SQL</option>
+          <option value="xml">XML</option>
+        </select>
+      </td>
+      <td>
+        <label class="check" for="private">Private</label>
+      </td>
+      <td>
+        <input type="checkbox" name="private" value="1" id="private" tabindex="6"  />
+      </td>
+      <td style="text-align: right;">
+        <button type="submit" value="submit" name="submit">Create Paste</button>
+      </td>
+    </tr>
+  </tbody></table></form>
+  <p class="note">
+    All fields except "Code" are optional. Your paste will be deleted after seven days.
+    <br />Click <a href="/about">About</a> to see more information.
+  </p>
 {% endblock %}

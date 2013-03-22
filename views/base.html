@@ -15,22 +15,20 @@
     <link rel="shortcut icon" href="/static/images/favicon.ico" type="image/vnd.microsoft.icon" />
     <meta name="google-site-verification" content="" />
     <link type="text/css" rel="stylesheet" href="/static/css/site.css" media="all" />
-    {% block Head %}{% endblock %}
+    {% block head %}{% endblock %}
   </head>
   <body>
-    <div id="wrapper">
-      <div id="header">
-        <a href="/"><img alt="logo" src="/static/images/logo.png" />Ngx Pbin</a>
-      </div>
-      <div id="content">
-        <ul id="menu">
-          <li><a href="/">New Paste</a></li>
-          <li><a href="/recent">Recent</a></li>
-          <li><a href="/api">API</a></li>
-          <li><a href="/about">About</a></li>
-        </ul>
-        {% block body %}{% endblock %}
-      </div>
+    <div id="header">
+      <a href="/">Ngx Pbin</a>
+      | <a href="http://ngx.cc/">Ngx CC</a>
+      <ul id="menu">
+        <li><a href="/recent">Recent</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/">New Paste</a></li>
+      </ul>
+    </div>
+    <div id="content">
+      {% block body %}{% endblock %}
     </div>
   </body>
 </html>
