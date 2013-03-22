@@ -108,8 +108,10 @@ def view_paste(paste_id):
     '''
     if not cache.exists(paste_id):
         redirect('/')
-    paste = json.loads(cache.get(paste_id))
-    return jinja2_template('view.html', paste=paste)
+    p = json.loads(cache.get(paste_id))
+    for k,v in p.iteritems():
+        p[k] = html_escape(v)
+    return jinja2_template('view.html', paste=p)
 
 
 @app.route('/recent')
