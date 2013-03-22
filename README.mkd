@@ -17,9 +17,10 @@ conf/settings.cfg::
     [bottle]
     port=80
     root_path=.
-    relay_chan=#channel
-    relay_admin_chan=#channel-ops
-    relay_host=localhost
+    url=http://p.ngx.cc/
+    relay_chan=#channel-1,#channel-2
+    relay_admin_chan=#channel-ops,#chanops
+    relay_host=server.domain.tld
     relay_port=4040
     mollom_pub_key=ABC
     mollom_priv_key=XYZ

@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 
 {% block body %}
-  View a paste and potentially edit.
+  Title: {{ paste['title'] }}<br />
+  Name: {{ paste['name'] }}<br />
+  Lang: {{ paste['lang'] }}<br />
+  Code: {{ paste['code'] }}
 {% endblock %}
