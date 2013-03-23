@@ -95,7 +95,7 @@ def submit_paste():
 
     # Public pastes should have an easy to type key
     # Private pastes should have a more secure key
-    id_length = 2
+    id_length = 1
     if str2bool(paste['private']):
         id_length = 8
 
@@ -148,14 +148,6 @@ def view_paste(paste_id):
     p['css'] = HtmlFormatter().get_style_defs('.code')
 
     return jinja2_template('view.html', paste=p)
-
-
-@app.route('/recent')
-def view_recent():
-    '''
-    Show recent public pastes
-    '''
-    return jinja2_template('recent.html')
 
 
 @app.route('/about')
