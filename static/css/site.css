@@ -53,10 +53,6 @@ body {
   width: 700px;
 }
 
-#content td:first-child {
-  text-align: right;
-}
-
 .note {
   background: none repeat scroll 0 0 #9999aa;
   color: #f7f7f7;
@@ -64,6 +60,55 @@ body {
   margin-top: 50px;
 }
 
-.note a {
+/**
+ * Content
+ */
+
+a {
   color: #ffffff;
+}
+
+/**
+ * Create Paste
+ */
+
+#pasteform td:first-child {
+  text-align: right;
+}
+
+/**
+ * View Paste
+ */
+
+.bar {
+  background: none repeat scroll 0 0 #465158;
+  color: #fefefe;
+  font-size: 75%;
+  height: 18px;
+  padding: 6px 15px;
+}
+
+.bar .title,
+.bar .syntax {
+  float: left;
+}
+
+.bar .author,
+.bar .options {
+  float: right;
+}
+
+.paste {
+  background: none repeat scroll 0 0 #ffffff;
+  padding: 0;
+}
+
+.paste .lines {
+  background: none repeat scroll 0 0 #eeeeee;
+  color: #999999;
+  padding: 0 5px;
+}
+
+.paste .code {
+  padding: 0 8px;
 }

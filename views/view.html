@@ -1,8 +1,32 @@
 {% extends 'base.html' %}
 
 {% block body %}
-  Title: {{ paste['title'] }}<br />
-  Name: {{ paste['name'] }}<br />
-  Syntax: {{ paste['syntax'] }}<br />
-  Code: {{ paste['code'] }}
+  <div class="bar">
+    <div class="title">
+      Title: <strong>{{ paste['title']|e }}</strong>
+    </div>
+    <div class="author">
+      Author: <strong>{{ paste['name']|e }}</strong>
+    </div>
+  </div>
+  <div class="paste">
+    <table><tbody>
+      <tr>
+        <td class="lines"><pre>
+{%-for i in range(1, (paste['code'].count('\n')) + 2) %}
+{{ i -}}
+{% endfor %}
+</pre></td>
+        <td class="code"><pre>{{ paste['code']|e }}</pre></td>
+      </tr>
+    </tbody></table>
+  </div>
+  <div class="bar">
+    <div class="syntax">
+      Syntax: <strong>{{ paste['syntax']|e }}</strong>
+    </div>
+    <div class="options">
+      <a href="#">Raw</a>
+    </div>
+  </div>
 {% endblock %}

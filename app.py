@@ -14,6 +14,7 @@ import socket
 import ConfigParser
 import Mollom
 from bottle import *
+import modules.ngxpygment
 
 app = Bottle()
 cache = redis.Redis('localhost')
@@ -61,15 +62,9 @@ def new_paste():
         'name': '',
         'syntax': 'nginx',
         'private': '0'}
-    try:
-        dat = request.cookies.get('dat', False)
-        if dat:
-            data = json.loads(dat)
-            # Make sure everything is a string
-            for k, v in data.iteritems():
-                data[k] = str(v)
-    except:
-        pass
+    dat = request.cookies.get('dat', False)
+    if dat:
+        data = json.loads(dat)
     return jinja2_template('paste.html', data=data)
 
 
@@ -131,8 +126,6 @@ def view_paste(paste_id):
     if not cache.exists(paste_id):
         redirect('/')
     p = json.loads(cache.get(paste_id))
-    for k,v in p.iteritems():
-        p[k] = html_escape(str(v))
     return jinja2_template('view.html', paste=p)
 
 
@@ -228,8 +221,7 @@ def main():
     '''
     Run the app
     '''
-    run(
-        app=StripPathMiddleware(app),
+    run(app=StripPathMiddleware(app),
         server=conf.get('bottle', 'python_server'),
         host='0.0.0.0',
         port=conf.getint('bottle', 'port'))

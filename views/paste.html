@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block body %}
-  <form action="/" method="post"><table><tbody>
+  <form action="/" method="post"><table id="pasteform"><tbody>
     <tr>
       <td>
         <label for="title">Title</label>
@@ -13,7 +13,7 @@
         <label for="name">IRC Nick</label>
       </td>
       <td colspan="2">
-        <input type="text" name="name" id="name" maxlength="32" tabindex="1" value="{{ data['name'] }}"/>
+        <input type="text" name="name" id="name" maxlength="32" tabindex="1" value="{{ data['name']|e }}"/>
       </td>
     </tr>
     <tr>
@@ -54,7 +54,7 @@
         <label class="check" for="private">Private</label>
       </td>
       <td>
-        <input type="checkbox" name="private" {% if data['private'] == '1' %}checked="checked"{% endif %} id="private" tabindex="6"  />
+        <input type="checkbox" name="private"{% if data['private'] == '1' %}checked="checked" {% endif %} id="private" tabindex="6"  />
       </td>
       <td style="text-align: right;">
         <button type="submit" value="submit" name="submit">Create Paste</button>
