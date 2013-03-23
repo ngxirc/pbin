@@ -13,7 +13,7 @@
         <label for="name">IRC Nick</label>
       </td>
       <td colspan="2">
-        <input type="text" name="name" value="" id="name" maxlength="32" tabindex="1" />
+        <input type="text" name="name" id="name" maxlength="32" tabindex="1" value="{{ data['name'] }}"/>
       </td>
     </tr>
     <tr>
@@ -26,10 +26,10 @@
     </tr>
     <tr>
       <td>
-        <label for="lang">Syntax</label>
+        <label for="syntax">Syntax</label>
       </td>
       <td>
-        <select name="lang" id="lang" class="select" tabindex="3">
+        <select name="syntax" id="syntax" class="select" tabindex="3">
           <option value="nginx">Nginx Config</option>
           <option value="html">HTML</option>
           <option value="text">Plain Text</option>
@@ -54,7 +54,7 @@
         <label class="check" for="private">Private</label>
       </td>
       <td>
-        <input type="checkbox" name="private" value="1" id="private" tabindex="6"  />
+        <input type="checkbox" name="private" {% if data['private'] == '1' %}checked="checked"{% endif %} id="private" tabindex="6"  />
       </td>
       <td style="text-align: right;">
         <button type="submit" value="submit" name="submit">Create Paste</button>
@@ -62,7 +62,7 @@
     </tr>
   </tbody></table></form>
   <p class="note">
-    All fields except "Code" are optional. Your paste will be deleted after seven days.
+    All fields except "Code" are optional. Your paste will be deleted after four days.
     <br />Click <a href="/about">About</a> to see more information.
   </p>
 {% endblock %}

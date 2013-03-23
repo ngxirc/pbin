@@ -8,5 +8,8 @@
   {% elif code.status==500 %}
     <h1>500, Internal Server Error</h1>
     <p>It's not you, it's me. Something broke. Please yell at me.</p>
+  {% else %}
+    <h1>Error</h1>
+    <p>{{ message }}</p>
   {% endif %}
 {% endblock %}

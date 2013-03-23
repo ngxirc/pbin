@@ -26,6 +26,7 @@ conf = ConfigParser.SafeConfigParser({
     'port': 80,
     'root_path': '.',
     'url': None,
+    'relay_enabled': True,
     'relay_chan': None,
     'relay_admin_chan': None,
     'mollom_pub_key': None,
@@ -56,7 +57,20 @@ def new_paste():
     '''
     Display page for new empty post
     '''
-    return jinja2_template('paste.html')
+    data = {
+        'name': '',
+        'syntax': 'nginx',
+        'private': '0'}
+    try:
+        dat = request.cookies.get('dat', False)
+        if dat:
+            data = json.loads(dat)
+            # Make sure everything is a string
+            for k, v in data.iteritems():
+                data[k] = str(v)
+    except:
+        pass
+    return jinja2_template('paste.html', data=data)
 
 
 @app.route('/', method='POST')
@@ -69,20 +83,21 @@ def submit_paste():
         'title': request.POST.get('title', '').strip(),
         'name': request.POST.get('name', '').strip(),
         'private': request.POST.get('private', '0').strip(),
-        'lang': request.POST.get('lang', '').strip(),
-        'expire': request.POST.get('expire', '0').strip()}
+        'syntax': request.POST.get('syntax', '').strip()}
 
+    # Validate data
+    for k, v in paste.iteritems():
+        if v == '':
+            return jinja2_template('error.html', code=200, message='All fields need to be filled out.')
+
+    # Check post for spam
     if not spam_free(paste['code']):
-        return jinja2_template('spam.html')
-
-    # The expiration limits need to be enforced
-    if not 30 <= int(paste['expire']) <= 40320:
-        redirect('/')
+        return jinja2_template('error.html', code=200, message='Your post triggered our spam filters!')
 
     # Public pastes should have an easy to type key
     # Private pastes should have a more secure key
     id_length = 2
-    if int(paste['private']) == 1:
+    if str2bool(paste['private']):
         id_length = 8
 
     # Pick a unique ID
@@ -94,9 +109,16 @@ def submit_paste():
         paste_id = binascii.b2a_hex(os.urandom(id_length))
 
     cache.set(paste_id, json.dumps(paste))
-    cache.expire(paste_id, int(paste['expire']) * 60)
+    cache.expire(paste_id, 345600)
 
-    send_irc(paste, paste_id)
+    dat = {
+      'name': str(paste['name']),
+      'syntax': str(paste['syntax']),
+      'private': str(paste['private'])}
+    response.set_cookie('dat', json.dumps(dat))
+
+    if str2bool(conf.get('bottle', 'relay_enabled')):
+        send_irc(paste, paste_id)
 
     redirect('/' + paste_id)
 
@@ -110,7 +132,7 @@ def view_paste(paste_id):
         redirect('/')
     p = json.loads(cache.get(paste_id))
     for k,v in p.iteritems():
-        p[k] = html_escape(v)
+        p[k] = html_escape(str(v))
     return jinja2_template('view.html', paste=p)
 
 
@@ -158,7 +180,7 @@ def send_irc(paste, paste_id):
     # Get list of relay channels
     # Always admin channels, only normal channels if paste is not private
     channels = conf.get('bottle', 'relay_admin_chan')
-    if int(paste['private'] ) != 1:
+    if not str2bool(paste['private']):
         channels = ''.join([channels, ',', conf.get('bottle', 'relay_chan')])
 
     # For each channel, send the relay server a message
@@ -182,6 +204,13 @@ def netcat(hostname, port, content):
         print "Received:", repr(data)
     print "Connection closed."
     s.close()
+
+
+def str2bool(v):
+    '''
+    Convert string to boolean
+    '''
+    return v.lower() in ('yes', 'true', 't', 'y', '1', 'on')
 
 
 class StripPathMiddleware(object):

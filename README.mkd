@@ -18,6 +18,7 @@ conf/settings.cfg::
     port=80
     root_path=.
     url=http://p.ngx.cc/
+    relay_enabled=True
     relay_chan=#channel-1,#channel-2
     relay_admin_chan=#channel-ops,#chanops
     relay_host=server.domain.tld
