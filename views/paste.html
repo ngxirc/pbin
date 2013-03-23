@@ -7,13 +7,13 @@
         <label for="title">Title</label>
       </td>
       <td>
-        <input value="" type="text" id="title" name="title" tabindex="2" maxlength="32" />
+        <input value="" type="text" id="title" name="title" maxlength="32" tabindex="1" />
       </td>
       <td>
         <label for="name">IRC Nick</label>
       </td>
       <td colspan="2">
-        <input type="text" name="name" id="name" maxlength="32" tabindex="1" value="{{ data['name']|e }}"/>
+        <input type="text" name="name" id="name" maxlength="32" value="{{ data['name']|e }}" tabindex="2"/>
       </td>
     </tr>
     <tr>
@@ -21,7 +21,7 @@
         <label for="code">Code</label>
       </td>
       <td colspan="4">
-        <textarea id="code" name="code" cols="60" rows="20" tabindex="4"></textarea>
+        <textarea id="code" name="code" cols="60" rows="20" tabindex=3"></textarea>
       </td>
     </tr>
     <tr>
@@ -29,7 +29,7 @@
         <label for="syntax">Syntax</label>
       </td>
       <td>
-        <select name="syntax" id="syntax" class="select" tabindex="3">
+        <select name="syntax" id="syntax" class="select" tabindex="4">
           <option value="nginx">Nginx Config</option>
           <option value="html">HTML</option>
           <option value="text">Plain Text</option>
@@ -54,10 +54,10 @@
         <label class="check" for="private">Private</label>
       </td>
       <td>
-        <input type="checkbox" name="private"{% if data['private'] == '1' %}checked="checked" {% endif %} id="private" tabindex="6"  />
+        <input type="checkbox" name="private"{% if data['private'] == '1' %}checked="checked" {% endif %} id="private" tabindex="5"  />
       </td>
       <td style="text-align: right;">
-        <button type="submit" value="submit" name="submit">Create Paste</button>
+        <button type="submit" value="submit" name="submit" tabindex="6">Create Paste</button>
       </td>
     </tr>
   </tbody></table></form>

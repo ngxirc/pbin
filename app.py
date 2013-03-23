@@ -6,15 +6,19 @@ try:
 except:
     pass
 
+from pygments import highlight
+from pygments.lexers import *
+from pygments.formatters import HtmlFormatter
+
 import os
 import binascii
 import redis
 import json
 import socket
+import modules.kwlinker
 import ConfigParser
 import Mollom
 from bottle import *
-import modules.ngxpygment
 
 app = Bottle()
 cache = redis.Redis('localhost')
@@ -125,7 +129,24 @@ def view_paste(paste_id):
     '''
     if not cache.exists(paste_id):
         redirect('/')
+
     p = json.loads(cache.get(paste_id))
+
+    # Syntax hilighting
+    try:
+        lexer = get_lexer_by_name(p['syntax'], stripall=True)
+    except:
+        lexer = get_lexer_by_name('text', stripall=True)
+    formatter = HtmlFormatter(linenos=True, cssclass="paste")
+    linker = modules.kwlinker.get_linker_by_name(p['syntax'])
+    if None != linker:
+        lexer.add_filter(linker)
+        p['code'] = highlight(p['code'], lexer, formatter)
+        p['code'] = modules.kwlinker.replace_markup(p['code'])
+    else:
+        p['code'] = highlight(p['code'], lexer, formatter)
+    p['css'] = HtmlFormatter().get_style_defs('.code')
+
     return jinja2_template('view.html', paste=p)
 
 

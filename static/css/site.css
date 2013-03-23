@@ -68,6 +68,10 @@ a {
   color: #ffffff;
 }
 
+.code a {
+  color: #008000;
+}
+
 /**
  * Create Paste
  */
@@ -103,7 +107,7 @@ a {
   padding: 0;
 }
 
-.paste .lines {
+.paste .linenos {
   background: none repeat scroll 0 0 #eeeeee;
   color: #999999;
   padding: 0 5px;
