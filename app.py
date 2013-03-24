@@ -42,7 +42,7 @@ def static(filename):
     '''
     Serve static files
     '''
-    return static_file(filename, root='{}/static'.format(conf.get('bottle', 'root_path')))
+    return bottle.static_file(filename, root='{}/static'.format(conf.get('bottle', 'root_path')))
 
 
 @app.error(500)
@@ -51,7 +51,7 @@ def errors(code):
     '''
     Handler for errors
     '''
-    return jinja2_template('error.html', code=code)
+    return bottle.jinja2_template('error.html', code=code)
 
 
 @app.route('/')
@@ -63,10 +63,10 @@ def new_paste():
         'name': '',
         'syntax': 'nginx',
         'private': '0'}
-    dat = request.cookies.get('dat', False)
+    dat = bottle.request.cookies.get('dat', False)
     if dat:
         data = json.loads(dat)
-    return jinja2_template('paste.html', data=data)
+    return bottle.jinja2_template('paste.html', data=data)
 
 
 @app.route('/', method='POST')
@@ -75,20 +75,20 @@ def submit_paste():
     Put a new paste into the database
     '''
     paste = {
-        'code': request.POST.get('code', '').strip(),
-        'title': request.POST.get('title', '').strip(),
-        'name': request.POST.get('name', '').strip(),
-        'private': request.POST.get('private', '0').strip(),
-        'syntax': request.POST.get('syntax', '').strip()}
+        'code': bottle.request.POST.get('code', '').strip(),
+        'title': bottle.request.POST.get('title', '').strip(),
+        'name': bottle.request.POST.get('name', '').strip(),
+        'private': bottle.request.POST.get('private', '0').strip(),
+        'syntax': bottle.request.POST.get('syntax', '').strip()}
 
     # Validate data
     for k, v in paste.iteritems():
         if v == '':
-            return jinja2_template('error.html', code=200, message='All fields need to be filled out.')
+            return bottle.jinja2_template('error.html', code=200, message='All fields need to be filled out.')
 
     # Check post for spam
     if not spam_free(paste['code']):
-        return jinja2_template('error.html', code=200, message='Your post triggered our spam filters!')
+        return bottle.jinja2_template('error.html', code=200, message='Your post triggered our spam filters!')
 
     # Public pastes should have an easy to type key
     # Private pastes should have a more secure key
@@ -111,12 +111,12 @@ def submit_paste():
       'name': str(paste['name']),
       'syntax': str(paste['syntax']),
       'private': str(paste['private'])}
-    response.set_cookie('dat', json.dumps(dat))
+    bottle.response.set_cookie('dat', json.dumps(dat))
 
     if str2bool(conf.get('bottle', 'relay_enabled')):
         send_irc(paste, paste_id)
 
-    redirect('/' + paste_id)
+    bottle.redirect('/' + paste_id)
 
 
 @app.route('/<paste_id>')
@@ -125,7 +125,7 @@ def view_paste(paste_id):
     Return page with past_id
     '''
     if not cache.exists(paste_id):
-        redirect('/')
+        bottle.redirect('/')
 
     p = json.loads(cache.get(paste_id))
 
@@ -144,7 +144,7 @@ def view_paste(paste_id):
         p['code'] = highlight(p['code'], lexer, formatter)
     p['css'] = HtmlFormatter().get_style_defs('.code')
 
-    return jinja2_template('view.html', paste=p)
+    return bottle.jinja2_template('view.html', paste=p)
 
 
 @app.route('/about')
@@ -152,7 +152,7 @@ def show_about():
     '''
     Return the information page
     '''
-    return jinja2_template('about.html')
+    return bottle.jinja2_template('about.html')
 
 
 def spam_free(content):
@@ -232,6 +232,3 @@ if __name__ == '__main__':
         server=conf.get('bottle', 'python_server'),
         host='0.0.0.0',
         port=conf.getint('bottle', 'port'))
-else:
-    #os.chdir(os.path.dirname(__file__))
-    application = bottle.default_app()
