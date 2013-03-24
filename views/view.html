@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 
 {% block head %}
-  <style>{{ paste['css'] }}</style>
+  <style>{{ paste['css'] }}
+  .code { background: #ffffff;}</style>
 {% endblock %}
 
 {% block body %}
@@ -21,7 +22,7 @@
       Syntax: <strong>{{ paste['syntax']|e }}</strong>
     </div>
     <div class="options">
-      <a href="#">Raw</a>
+      <a href="/r/{{ pid }}">Raw</a>
     </div>
   </div>
 {% endblock %}

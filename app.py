@@ -122,7 +122,7 @@ def submit_paste():
 @app.route('/<paste_id>')
 def view_paste(paste_id):
     '''
-    Return page with past_id
+    Return page with paste_id
     '''
     if not cache.exists(paste_id):
         bottle.redirect('/')
@@ -144,8 +144,20 @@ def view_paste(paste_id):
         p['code'] = highlight(p['code'], lexer, formatter)
     p['css'] = HtmlFormatter().get_style_defs('.code')
 
-    return bottle.jinja2_template('view.html', paste=p)
+    return bottle.jinja2_template('view.html', paste=p, pid=paste_id)
 
+
+@app.route('/r/<paste_id>')
+def view_raw(paste_id):
+    '''
+    View raw paste with paste_id
+    '''
+    if not cache.exists(paste_id):
+        bottle.redirect('/')
+
+    p = json.loads(cache.get(paste_id))
+
+    return bottle.jinja2_template('raw.html', code=p['code'])
 
 @app.route('/about')
 def show_about():
@@ -228,7 +240,7 @@ class StripPathMiddleware(object):
 
 
 if __name__ == '__main__':
-    run(app=StripPathMiddleware(app),
+    bottle.run(app=StripPathMiddleware(app),
         server=conf.get('bottle', 'python_server'),
         host='0.0.0.0',
         port=conf.getint('bottle', 'port'))
