@@ -10,6 +10,7 @@ from pygments import highlight
 from pygments.lexers import *
 from pygments.formatters import HtmlFormatter
 
+import bottle
 import os
 import binascii
 import redis
@@ -18,13 +19,9 @@ import socket
 import modules.kwlinker
 import ConfigParser
 import Mollom
-from bottle import *
 
-app = Bottle()
+app = application = bottle.Bottle()
 cache = redis.Redis('localhost')
-
-# Uncomment to run in a WSGI server
-#os.chdir(os.path.dirname(__file__))
 
 # Load Settings
 conf = ConfigParser.SafeConfigParser({
@@ -230,15 +227,11 @@ class StripPathMiddleware(object):
         return self.a(e, h)
 
 
-def main():
-    '''
-    Run the app
-    '''
+if __name__ == '__main__':
     run(app=StripPathMiddleware(app),
         server=conf.get('bottle', 'python_server'),
         host='0.0.0.0',
         port=conf.getint('bottle', 'port'))
-
-
-if __name__ == '__main__':
-    main()
+else:
+    #os.chdir(os.path.dirname(__file__))
+    application = bottle.default_app()
