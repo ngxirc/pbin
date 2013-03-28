@@ -31,6 +31,7 @@ conf = ConfigParser.SafeConfigParser({
     'relay_enabled': True,
     'relay_chan': None,
     'relay_admin_chan': None,
+    'check_spam': True,
     'mollom_pub_key': None,
     'mollom_priv_key': None,
     'python_server': 'auto'})
@@ -74,6 +75,7 @@ def submit_paste():
     '''
     Put a new paste into the database
     '''
+    import time #
     paste = {
         'code': bottle.request.POST.get('code', '').strip(),
         'title': bottle.request.POST.get('title', '').strip(),
@@ -87,8 +89,9 @@ def submit_paste():
             return bottle.jinja2_template('error.html', code=200, message='All fields need to be filled out.')
 
     # Check post for spam
-    if not spam_free(paste['code']):
-        return bottle.jinja2_template('error.html', code=200, message='Your post triggered our spam filters!')
+    if str2bool(conf.get('bottle', 'check_spam')):
+        if not spam_free(paste['code']):
+            return bottle.jinja2_template('error.html', code=200, message='Your post triggered our spam filters!')
 
     # Public pastes should have an easy to type key
     # Private pastes should have a more secure key
