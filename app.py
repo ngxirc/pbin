@@ -12,6 +12,7 @@ from pygments.formatters import HtmlFormatter
 
 import bottle
 import os
+import re
 import binascii
 import redis
 import json
@@ -80,7 +81,7 @@ def new_fork(paste_id):
         bottle.redirect('/')
 
     data = json.loads(cache.get(paste_id))
-    data['title'] = 're: ' + data['name']
+    data['title'] = 're: ' + data['name'][:32]
     data['private'] = str(str2int(data['private']))
 
     dat = bottle.request.cookies.get('dat', False)
@@ -96,6 +97,7 @@ def submit_paste():
     '''
     Put a new paste into the database
     '''
+    r = re.compile('^[- !$%^&*()_+|~=`{}\[\]:";\'<>?,.\/a-zA-Z0-9]{1,32}$')
     paste = {
         'code': bottle.request.POST.get('code', '').strip(),
         'title': bottle.request.POST.get('title', '').strip(),
@@ -107,6 +109,9 @@ def submit_paste():
     for k, v in paste.iteritems():
         if v == '':
             return bottle.jinja2_template('error.html', code=200, message='All fields need to be filled out.')
+    for k in ['title', 'name']:
+        if not r.match(paste[k]):
+            return bottle.jinja2_template('error.html', code=200, message='Invalid input detected.')
 
     # Check post for spam
     if str2bool(conf.get('bottle', 'check_spam')):
