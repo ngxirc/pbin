@@ -189,6 +189,8 @@ def send_irc(paste, paste_id):
     Send notification to channels
     '''
     # Build the message to send to the channel
+    host = conf.get('bottle', 'relay_host')
+    port = int(conf.get('bottle', 'relay_port'))
     message = ''.join(['Paste from ', paste['name'], ': [ ',
         conf.get('bottle', 'url'), paste_id, ' ] - ', paste['title']])
 
@@ -201,7 +203,7 @@ def send_irc(paste, paste_id):
     # For each channel, send the relay server a message
     for channel in channels.split(','):
         nc_msg = ''.join([channel, ' ', message])
-        netcat(conf.get('bottle', 'relay_host'), int(conf.get('bottle', 'relay_port')), nc_msg)
+        netcat(host, port, nc_msg)
 
 
 def netcat(hostname, port, content):
@@ -212,12 +214,6 @@ def netcat(hostname, port, content):
     s.connect((hostname, port))
     s.sendall(content)
     s.shutdown(socket.SHUT_WR)
-    while 1:
-        data = s.recv(1024)
-        if data == "":
-            break
-        print "Received:", repr(data)
-    print "Connection closed."
     s.close()
 
 
