@@ -7,7 +7,7 @@
         <label for="title">Title</label>
       </td>
       <td>
-        <input value="" type="text" id="title" name="title" maxlength="32" tabindex="1" />
+        <input value="{{ data['title']|e }}" type="text" id="title" name="title" maxlength="32" tabindex="1" />
       </td>
       <td>
         <label for="name">IRC Nick</label>
@@ -21,7 +21,7 @@
         <label for="code">Code</label>
       </td>
       <td colspan="4">
-        <textarea id="code" name="code" cols="60" rows="20" tabindex=3"></textarea>
+        <textarea id="code" name="code" cols="60" rows="20" tabindex=3">{{ data['code']|e }}</textarea>
       </td>
     </tr>
     <tr>

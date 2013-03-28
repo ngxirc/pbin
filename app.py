@@ -67,6 +67,27 @@ def new_paste():
     dat = bottle.request.cookies.get('dat', False)
     if dat:
         data = json.loads(dat)
+        data['private'] = str(str2int(data['private']))
+    return bottle.jinja2_template('paste.html', data=data)
+
+
+@app.route('/f/<paste_id>')
+def new_fork(paste_id):
+    '''
+    Display page for new fork from a paste
+    '''
+    if not cache.exists(paste_id):
+        bottle.redirect('/')
+
+    data = json.loads(cache.get(paste_id))
+    data['title'] = 're: ' + data['name']
+    data['private'] = str(str2int(data['private']))
+
+    dat = bottle.request.cookies.get('dat', False)
+    if dat:
+        d = json.loads(dat)
+        data['name'] = d['name']
+
     return bottle.jinja2_template('paste.html', data=data)
 
 
@@ -75,7 +96,6 @@ def submit_paste():
     '''
     Put a new paste into the database
     '''
-    import time #
     paste = {
         'code': bottle.request.POST.get('code', '').strip(),
         'title': bottle.request.POST.get('title', '').strip(),
@@ -225,6 +245,13 @@ def str2bool(v):
     Convert string to boolean
     '''
     return v.lower() in ('yes', 'true', 't', 'y', '1', 'on')
+
+
+def str2int(v):
+    '''
+    Convert string to boolean to integer
+    '''
+    return int(v.lower() in ('yes', 'true', 't', 'y', '1', 'on'))
 
 
 class StripPathMiddleware(object):
