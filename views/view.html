@@ -24,6 +24,11 @@
     <div class="options">
       <a href="/r/{{ pid }}">Raw</a>
     </div>
+    {% if 'forked_from' in paste and paste['forked_from'] %}
+    <div class="options">
+      <a href="/d/{{ paste['forked_from'] }}/{{ pid }}">Diff</a>&nbsp;|&nbsp;
+    </div>
+    {% endif %}
     <div class="options">
       <a href="/f/{{ pid }}">Fork</a>&nbsp;|&nbsp;
     </div>

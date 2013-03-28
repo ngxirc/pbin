@@ -16,6 +16,7 @@ import re
 import binascii
 import redis
 import json
+import difflib
 import socket
 import modules.kwlinker
 import ConfigParser
@@ -81,6 +82,7 @@ def new_fork(paste_id):
         bottle.redirect('/')
 
     data = json.loads(cache.get(paste_id))
+    data['paste_id'] = paste_id
     data['title'] = 're: ' + data['name'][:32]
     data['private'] = str(str2int(data['private']))
 
@@ -103,7 +105,8 @@ def submit_paste():
         'title': bottle.request.POST.get('title', '').strip(),
         'name': bottle.request.POST.get('name', '').strip(),
         'private': bottle.request.POST.get('private', '0').strip(),
-        'syntax': bottle.request.POST.get('syntax', '').strip()}
+        'syntax': bottle.request.POST.get('syntax', '').strip(),
+        'forked_from': bottle.request.POST.get('forked_from', None).strip()}
 
     # Validate data
     if max(0, bottle.request.content_length) > bottle.request.MEMFILE_MAX:
@@ -189,6 +192,25 @@ def view_raw(paste_id):
 
     return bottle.jinja2_template('raw.html', code=p['code'])
 
+
+@app.route('/d/<orig>/<fork>')
+def view_diff(orig, fork):
+    '''
+    View the diff between a paste and what it was forked from
+    '''
+    if not cache.exists(orig) or not cache.exists(fork):
+        return bottle.jinja2_template('error.html', code=200, message='One of the pastes could not be found.')
+
+    po = json.loads(cache.get(orig))
+    pf = json.loads(cache.get(fork))
+    co = bottle.html_escape(po['code']).split()
+    cf = bottle.html_escape(pf['code']).split()
+    lo = '<a href="/' + orig + '">' + orig + '</a>'
+    lf = '<a href="/' + fork + '">' + fork + '</a>'
+
+    diff = difflib.HtmlDiff().make_table(co, cf, lo, lf)
+    return bottle.jinja2_template('page.html', data=diff)
+
 @app.route('/about')
 def show_about():
     '''
@@ -218,11 +240,18 @@ def send_irc(paste, paste_id):
     '''
     Send notification to channels
     '''
-    # Build the message to send to the channel
     host = conf.get('bottle', 'relay_host')
     port = int(conf.get('bottle', 'relay_port'))
-    message = ''.join(['Paste from ', paste['name'], ': [ ',
-        conf.get('bottle', 'url'), paste_id, ' ] - ', paste['title']])
+
+    # Build the message to send to the channel
+    if paste['forked_from']:
+        orig = json.loads(cache.get(paste['forked_from']))
+        message = ''.join(['Paste from ', orig['name'], 
+            ' forked by ', paste['name'], ': [ ',
+            conf.get('bottle', 'url'), paste_id, ' ] - ', paste['title']])
+    else:
+        message = ''.join(['Paste from ', paste['name'], ': [ ',
+            conf.get('bottle', 'url'), paste_id, ' ] - ', paste['title']])
 
     # Get list of relay channels
     # Always admin channels, only normal channels if paste is not private

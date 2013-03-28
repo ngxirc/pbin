@@ -58,6 +58,9 @@
         <input type="checkbox" name="private"{% if data['private'] == '1' %}checked="checked" {% endif %} id="private" tabindex="5"  />
       </td>
       <td style="text-align: right;">
+        {% if 'paste_id' in data %}
+        <input type="hidden" name="forked_from" value="{{ data['paste_id'] }}" />
+        {% endif %}
         <button type="submit" value="submit" name="submit" tabindex="6">Create Paste</button>
       </td>
     </tr>
