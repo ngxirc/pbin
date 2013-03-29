@@ -83,7 +83,7 @@ def new_fork(paste_id):
 
     data = json.loads(cache.get(paste_id))
     data['paste_id'] = paste_id
-    data['title'] = 're: ' + data['name'][:32]
+    data['title'] = 're: ' + data['title'][:32]
     data['private'] = str(str2int(data['private']))
 
     dat = bottle.request.cookies.get('dat', False)
