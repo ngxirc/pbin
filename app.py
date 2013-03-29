@@ -106,13 +106,13 @@ def submit_paste():
         'name': bottle.request.POST.get('name', '').strip(),
         'private': bottle.request.POST.get('private', '0').strip(),
         'syntax': bottle.request.POST.get('syntax', '').strip(),
-        'forked_from': bottle.request.POST.get('forked_from', None).strip()}
+        'forked_from': bottle.request.POST.get('forked_from', '').strip()}
 
     # Validate data
     if max(0, bottle.request.content_length) > bottle.request.MEMFILE_MAX:
         return bottle.jinja2_template('error.html', code=200, message='This request is too large to process.')
-    for k, v in paste.iteritems():
-        if v == '':
+    for k in ['code', 'private', 'syntax']:
+        if paste[k] == '':
             return bottle.jinja2_template('error.html', code=200, message='All fields need to be filled out.')
     for k in ['title', 'name']:
         if not r.match(paste[k]):
@@ -203,8 +203,10 @@ def view_diff(orig, fork):
 
     po = json.loads(cache.get(orig))
     pf = json.loads(cache.get(fork))
-    co = bottle.html_escape(po['code']).split()
-    cf = bottle.html_escape(pf['code']).split()
+    #co = bottle.html_escape(po['code']).split()
+    co = po['code'].split('\n')
+    #cf = bottle.html_escape(pf['code']).split()
+    cf = pf['code'].split('\n')
     lo = '<a href="/' + orig + '">' + orig + '</a>'
     lf = '<a href="/' + fork + '">' + fork + '</a>'
 
