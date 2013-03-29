@@ -1,32 +1,34 @@
 #!/usr/bin/env python
 
+# This isn't needed unless python_server=gevent is set.
+# If we are running with gevent, then this is required.
 try:
     import gevent.monkey
     gevent.monkey.patch_all()
 except:
     pass
 
+import bottle
+import modules.kwlinker
+
 from pygments import highlight
 from pygments.lexers import *
 from pygments.formatters import HtmlFormatter
 
-import bottle
+import binascii
+import ConfigParser
+import difflib
+import json
+import Mollom
 import os
 import re
-import binascii
 import redis
-import json
-import difflib
 import socket
-import modules.kwlinker
-import ConfigParser
-import Mollom
-
-app = application = bottle.Bottle()
-cache = redis.Redis('localhost')
 
 # Load Settings
 conf = ConfigParser.SafeConfigParser({
+    'cache_host': 'localhost',
+    'cache_db': 0,
     'port': 80,
     'root_path': '.',
     'url': None,
@@ -38,6 +40,9 @@ conf = ConfigParser.SafeConfigParser({
     'mollom_priv_key': None,
     'python_server': 'auto'})
 conf.read('conf/settings.cfg')
+
+app = application = bottle.Bottle()
+cache = redis.Redis(host=conf.get('bottle', 'cache_host'), db=int(conf.get('bottle', 'cache_db')))
 
 
 @app.route('/static/<filename:path>')
