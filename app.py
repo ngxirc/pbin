@@ -116,7 +116,7 @@ def submit_paste():
     # Validate data
     if max(0, bottle.request.content_length) > bottle.request.MEMFILE_MAX:
         return bottle.jinja2_template('error.html', code=200, message='This request is too large to process.')
-    for k in ['code', 'private', 'syntax']:
+    for k in ['code', 'private', 'syntax', 'title', 'name']:
         if paste[k] == '':
             return bottle.jinja2_template('error.html', code=200, message='All fields need to be filled out.')
     for k in ['title', 'name']:
