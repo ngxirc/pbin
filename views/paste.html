@@ -7,13 +7,13 @@
         <label for="title">Title</label>
       </td>
       <td>
-        <input value="{{ data['title']|e }}" type="text" id="title" name="title" maxlength="32" tabindex="1" />
+        <input value="{{ data['title']|e }}" type="text" id="title" name="title" maxlength="32" tabindex="1" required />
       </td>
       <td>
         <label for="name">IRC Nick</label>
       </td>
       <td colspan="2">
-        <input type="text" name="name" id="name" maxlength="32" value="{{ data['name']|e }}" tabindex="2"/>
+        <input type="text" name="name" id="name" maxlength="32" value="{{ data['name']|e }}" tabindex="2" required />
       </td>
     </tr>
     <tr>
@@ -21,7 +21,7 @@
         <label for="code">Code</label>
       </td>
       <td colspan="4">
-        <textarea id="code" name="code" cols="60" rows="20" tabindex=3">{{ data['code']|e }}</textarea>
+        <textarea id="code" name="code" cols="60" rows="20" tabindex=3" required>{{ data['code']|e }}</textarea>
       </td>
     </tr>
     <tr>
@@ -55,7 +55,7 @@
         <label class="check" for="private">Private</label>
       </td>
       <td>
-        <input type="checkbox" name="private"{% if data['private'] == '1' %}checked="checked" {% endif %} id="private" tabindex="5"  />
+        <input type="checkbox" name="private"{% if data['private'] == '1' %}checked="checked" {% endif %} id="private" tabindex="5" />
       </td>
       <td style="text-align: right;">
         {% if 'paste_id' in data %}
