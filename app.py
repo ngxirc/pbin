@@ -104,7 +104,7 @@ def submit_paste():
     '''
     Put a new paste into the database
     '''
-    r = re.compile('^[- !$%^&*()_+|~=`{}\[\]:";\'<>?,.\/a-zA-Z0-9]{1,32}$')
+    r = re.compile('^[- !$%^&*()_+|~=`{}\[\]:";\'<>?,.\/a-zA-Z0-9]{1,48}$')
     paste = {
         'code': bottle.request.POST.get('code', '').strip(),
         'title': bottle.request.POST.get('title', '').strip(),
