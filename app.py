@@ -240,6 +240,8 @@ def spam_free(content):
     # cc['spam']: 1 for ham, 2 for spam, 3 for unsure;
     if cc['spam'] == 2:
         return False
+    if cc['spam'] == 3:
+        return False
     return True
 
 
