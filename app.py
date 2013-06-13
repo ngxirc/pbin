@@ -124,6 +124,8 @@ def submit_paste():
             return bottle.jinja2_template('error.html', code=200, message='Invalid input detected.')
 
     # Check post for spam
+    if bottle.request.POST.get('confirm-name', '').strip() != '':
+        return bottle.jinja2_template('error.html', code=200, message='Your post triggered our spam filters!')
     if str2bool(conf.get('bottle', 'check_spam')):
         if not spam_free(paste['code']):
             return bottle.jinja2_template('error.html', code=200, message='Your post triggered our spam filters!')
