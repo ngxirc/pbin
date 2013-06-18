@@ -172,9 +172,9 @@ def view_paste(paste_id):
 
     # Syntax hilighting
     try:
-        lexer = get_lexer_by_name(p['syntax'], stripall=True)
+        lexer = get_lexer_by_name(p['syntax'], stripall=False)
     except:
-        lexer = get_lexer_by_name('text', stripall=True)
+        lexer = get_lexer_by_name('text', stripall=False)
     formatter = HtmlFormatter(linenos=True, cssclass="paste")
     linker = modules.kwlinker.get_linker_by_name(p['syntax'])
     if None != linker:
