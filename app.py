@@ -106,7 +106,8 @@ def submit_paste():
     '''
     r = re.compile('^[- !$%^&*()_+|~=`{}\[\]:";\'<>?,.\/a-zA-Z0-9]{1,48}$')
     paste = {
-        'code': bottle.request.POST.get('code', '').strip(),
+        #'code': bottle.request.POST.get('code', '').strip(),
+        'code': bottle.request.POST.get('code', ''),
         'title': bottle.request.POST.get('title', '').strip(),
         'name': bottle.request.POST.get('name', '').strip(),
         'private': bottle.request.POST.get('private', '0').strip(),
