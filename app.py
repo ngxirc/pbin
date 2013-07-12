@@ -95,6 +95,8 @@ def new_fork(paste_id):
     if dat:
         d = json.loads(dat)
         data['name'] = d['name']
+    else:
+        data['name'] = ''
 
     return bottle.jinja2_template('paste.html', data=data)
 
