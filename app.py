@@ -269,14 +269,19 @@ def send_irc(paste, paste_id):
 
     # Get list of relay channels
     # Always admin channels, only normal channels if paste is not private
-    channels = conf.get('bottle', 'relay_admin_chan')
-    if not str2bool(paste['private']):
-        channels = ''.join([channels, ',', conf.get('bottle', 'relay_chan')])
+    if conf.get('bottle', 'relay_admin_chan') is not None:
+        channels = conf.get('bottle', 'relay_admin_chan')
+        if conf.get('bottle', 'relay_chan') is not None and not str2bool(paste['private']):
+            channels = ''.join([channels, ',', conf.get('bottle', 'relay_chan')])
+    else:
+        if conf.get('bottle', 'relay_chan') is not None and not str2bool(paste['private']):
+            channels = conf.get('bottle', 'relay_chan')
 
     # For each channel, send the relay server a message
-    for channel in channels.split(','):
-        nc_msg = ''.join([channel, ' ', message])
-        netcat(host, port, nc_msg)
+    if channels:
+        for channel in channels.split(','):
+            nc_msg = ''.join([channel, ' ', message])
+            netcat(host, port, nc_msg)
 
 
 def netcat(hostname, port, content):
