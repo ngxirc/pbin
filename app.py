@@ -268,6 +268,7 @@ def send_irc(paste, paste_id):
             conf.get('bottle', 'url'), paste_id, ' ] - ', paste['title']])
 
     # Get list of relay channels
+    channels = None
     # Always admin channels, only normal channels if paste is not private
     if conf.get('bottle', 'relay_admin_chan') is not None:
         channels = conf.get('bottle', 'relay_admin_chan')
