@@ -282,7 +282,10 @@ def send_irc(paste, paste_id):
     if channels:
         for channel in channels.split(','):
             nc_msg = ''.join([channel, ' ', message])
-            netcat(host, port, nc_msg)
+            try:
+                netcat(host, port, nc_msg)
+            except:
+                pass
 
 
 def netcat(hostname, port, content):
