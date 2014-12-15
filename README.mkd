@@ -9,6 +9,14 @@ any data to disk. The paste is only active until the cache is cleared. this
 makes it ideal as a fast service for quick support. It also has extra Nginx
 hilighting features.
 
+Required Software
+-----------------
+
+Python modules (installable with `pip install`, if you have `pip` installed):  
+`bottle`, `mollom`, `Jinja2`
+
+Additional Software needed:  [`redis`](http://redis.io/download)
+
 Required Files
 --------------
 
@@ -25,7 +33,7 @@ conf/settings.cfg::
     relay_admin_chan=#channel-ops,#chanops
     relay_host=server.domain.tld
     relay_port=4040
-    check_spam=True
+    check_spam=False
     mollom_pub_key=ABC
     mollom_priv_key=XYZ
     python_server=auto
