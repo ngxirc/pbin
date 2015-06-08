@@ -13,7 +13,7 @@ Required Software
 -----------------
 
 Python modules (installable with `pip install`, if you have `pip` installed):  
-`bottle`, `mollom`, `Jinja2`
+`bottle`, `Jinja2`
 
 Additional Software needed:  [`redis`](http://redis.io/download)
 
@@ -33,9 +33,6 @@ conf/settings.cfg::
     relay_admin_chan=#channel-ops,#chanops
     relay_host=server.domain.tld
     relay_port=4040
-    check_spam=False
-    mollom_pub_key=ABC
-    mollom_priv_key=XYZ
     python_server=auto
 
 Credits

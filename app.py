@@ -19,7 +19,6 @@ import binascii
 import ConfigParser
 import difflib
 import json
-import Mollom
 import os
 import re
 import redis
@@ -35,9 +34,6 @@ conf = ConfigParser.SafeConfigParser({
     'relay_enabled': True,
     'relay_chan': None,
     'relay_admin_chan': None,
-    'check_spam': True,
-    'mollom_pub_key': None,
-    'mollom_priv_key': None,
     'python_server': 'auto'})
 conf.read('conf/settings.cfg')
 
@@ -108,7 +104,6 @@ def submit_paste():
     '''
     r = re.compile('^[- !$%^&*()_+|~=`{}\[\]:";\'<>?,.\/a-zA-Z0-9]{1,48}$')
     paste = {
-        #'code': bottle.request.POST.get('code', '').strip(),
         'code': bottle.request.POST.get('code', ''),
         'title': bottle.request.POST.get('title', '').strip(),
         'name': bottle.request.POST.get('name', '').strip(),
@@ -129,9 +124,6 @@ def submit_paste():
     # Check post for spam
     if bottle.request.POST.get('phone', '').strip() != '':
         return bottle.jinja2_template('error.html', code=200, message='Your post triggered our spam filters!')
-    if str2bool(conf.get('bottle', 'check_spam')):
-        if not spam_free(paste['code']):
-            return bottle.jinja2_template('error.html', code=200, message='Your post triggered our spam filters!')
 
     # Public pastes should have an easy to type key
     # Private pastes should have a more secure key
@@ -214,9 +206,7 @@ def view_diff(orig, fork):
 
     po = json.loads(cache.get(orig))
     pf = json.loads(cache.get(fork))
-    #co = bottle.html_escape(po['code']).split()
     co = po['code'].split('\n')
-    #cf = bottle.html_escape(pf['code']).split()
     cf = pf['code'].split('\n')
     lo = '<a href="/' + orig + '">' + orig + '</a>'
     lf = '<a href="/' + fork + '">' + fork + '</a>'
@@ -230,25 +220,6 @@ def show_about():
     Return the information page
     '''
     return bottle.jinja2_template('about.html')
-
-
-def spam_free(content):
-    '''
-    Checks if content is spam free. Returns True if no spam is found.
-    '''
-    mollom_api = Mollom.MollomAPI(
-        publicKey=conf.get('bottle', 'mollom_pub_key'),
-        privateKey=conf.get('bottle', 'mollom_priv_key'))
-    if not mollom_api.verifyKey():
-        return False
-
-    cc = mollom_api.checkContent(postBody=content)
-    # cc['spam']: 1 for ham, 2 for spam, 3 for unsure;
-    if cc['spam'] == 2:
-        return False
-    if cc['spam'] == 3:
-        return False
-    return True
 
 
 def send_irc(paste, paste_id):
