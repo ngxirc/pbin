@@ -200,6 +200,7 @@ def view_raw(paste_id):
 
     p = json.loads(cache.get(paste_id))
 
+    bottle.response.add_header('Content-Type', 'text/plain; charset=utf-8')
     return bottle.jinja2_template('raw.html', code=p['code'])
 
 
