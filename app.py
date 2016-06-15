@@ -309,7 +309,6 @@ def str2int(v):
 def spam_detected(title, body, author, address):
     '''
     Returns True if spam was detected
-    http://spamcheck.postmarkapp.com/doc
     '''
     m = Mollom(conf.get('bottle', 'mollom_pub_key'), conf.get('bottle', 'mollom_priv_key'))
     try:
@@ -333,9 +332,7 @@ def spam_detected(title, body, author, address):
         #captcha_id, captcha_url = mollom_client.create_captcha(content_id=content_id)
         #solved = mollom_client.check_captcha(captcha_id=captcha_id, solution=solution,
         #    author_id=author_id, author_ip=author_ip)
-
-        # If unsure, let it pass
-        return False
+        return True
 
 
 class StripPathMiddleware(object):
