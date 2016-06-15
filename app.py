@@ -11,6 +11,7 @@ except:
 import bottle
 import modules.kwlinker
 
+from modules.mollom import Mollom
 from pygments import highlight
 from pygments.lexers import *
 from pygments.formatters import HtmlFormatter
@@ -22,6 +23,7 @@ import json
 import os
 import re
 import redis
+import requests
 import socket
 
 # Load Settings
@@ -34,6 +36,7 @@ conf = ConfigParser.SafeConfigParser({
     'relay_enabled': True,
     'relay_chan': None,
     'relay_admin_chan': None,
+    'check_spam': False,
     'python_server': 'auto'})
 conf.read('conf/settings.cfg')
 
@@ -124,6 +127,9 @@ def submit_paste():
     # Check post for spam
     if bottle.request.POST.get('phone', '').strip() != '':
         return bottle.jinja2_template('error.html', code=200, message='Your post triggered our spam filters!')
+    if conf.get('bottle', 'check_spam'):
+        if spam_detected(paste['title'], paste['code'], paste['name'], bottle.request.environ.get('REMOTE_ADDR')):
+            return bottle.jinja2_template('error.html', code=200, message='Your post triggered our spam filters.')
 
     # Public pastes should have an easy to type key
     # Private pastes should have a more secure key
@@ -214,6 +220,21 @@ def view_diff(orig, fork):
     diff = difflib.HtmlDiff().make_table(co, cf, lo, lf)
     return bottle.jinja2_template('page.html', data=diff)
 
+
+@app.route('/thisoneisspam/<paste_id>')
+def delete_spam(paste_id):
+    '''
+    Delete a paste that turns out to have been spam
+    '''
+    #TODO This should eventually require a captcha and report back to mollom.
+    #mollom_client.send_feedback(content_id=content_id, reason="spam")
+    if not cache.exists(paste_id):
+        return 'Paste not found'
+    if cache.delete(paste_id):
+        return 'Paste removed'
+    else:
+        return 'Error removing paste'
+
 @app.route('/about')
 def show_about():
     '''
@@ -283,6 +304,38 @@ def str2int(v):
     Convert string to boolean to integer
     '''
     return int(v.lower() in ('yes', 'true', 't', 'y', '1', 'on'))
+
+
+def spam_detected(title, body, author, address):
+    '''
+    Returns True if spam was detected
+    http://spamcheck.postmarkapp.com/doc
+    '''
+    m = Mollom(conf.get('bottle', 'mollom_pub_key'), conf.get('bottle', 'mollom_priv_key'))
+    try:
+        result = m.check_content(
+            post_title = title,
+            post_body = body,
+            author_id = author,
+            author_ip = address)
+    except:
+        # Service is down
+        print('Mollom service down; failing open')
+        return False
+
+    spam_classification = result['content']['spamClassification']
+    if spam_classification == "ham":
+        return False
+    elif spam_classification == "spam":
+        return True
+    else:
+        # Could choose to add a captcha here in the future
+        #captcha_id, captcha_url = mollom_client.create_captcha(content_id=content_id)
+        #solved = mollom_client.check_captcha(captcha_id=captcha_id, solution=solution,
+        #    author_id=author_id, author_ip=author_ip)
+
+        # If unsure, let it pass
+        return False
 
 
 class StripPathMiddleware(object):
