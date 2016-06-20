@@ -127,7 +127,7 @@ def submit_paste():
     # Check post for spam
     if bottle.request.POST.get('phone', '').strip() != '':
         return bottle.jinja2_template('error.html', code=200, message='Your post triggered our spam filters!')
-    if conf.get('bottle', 'check_spam'):
+    if str2bool(conf.get('bottle', 'check_spam')):
         if spam_detected(paste['title'], paste['code'], paste['name'], bottle.request.environ.get('REMOTE_ADDR')):
             return bottle.jinja2_template('error.html', code=200, message='Your post triggered our spam filters.')
 
