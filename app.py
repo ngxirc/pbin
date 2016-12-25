@@ -10,14 +10,11 @@ from pygments.formatters import HtmlFormatter
 import binascii
 import ConfigParser
 import difflib
-import hashlib
 import json
 import os
-import random
 import re
 import redis
 import requests
-import string
 import socket
 
 from furl import furl
@@ -43,6 +40,7 @@ app = application = bottle.Bottle()
 cache = redis.Redis(host=conf.get('bottle', 'cache_host'), db=int(conf.get('bottle', 'cache_db')))
 
 
+# noinspection PyUnresolvedReferences
 @app.route('/static/<filename:path>')
 def static(filename):
     """
@@ -113,7 +111,8 @@ def submit_paste():
     """
     Put a new paste into the database
     """
-    r = re.compile('^[- !$%^&*()_+|~=`{}\[\]:";\'<>?,.\/a-zA-Z0-9]{1,48}$')
+    # noinspection PyUnusedLocal
+    r = re.compile('^[- !$%^&*()_+|~=`{}\[\]:";\'<>?,./a-zA-Z0-9]{1,48}$')
     paste = {
         'code': bottle.request.POST.get('code', ''),
         'name': bottle.request.POST.get('name', '').strip(),
@@ -130,13 +129,13 @@ def submit_paste():
         if paste[k] == '':
             return bottle.jinja2_template('error.html', code=200,
                                           message='All fields need to be filled out. ER:577')
-    if not re.match('^[- !$%^&*()_+|~=`{}\[\]:";\'<>?,.\/a-zA-Z0-9]{1,48}$', paste['name']):
+    if not re.match('^[- !$%^&*()_+|~=`{}\[\]:";\'<>?,./a-zA-Z0-9]{1,48}$', paste['name']):
         return bottle.jinja2_template('error.html', code=200,
                                       message='Invalid input detected. ERR:925')
 
         # Basic spam checks
-        return bottle.jinja2_template('error.html', code=200,
-                                      message='Your post triggered our spam filters! ERR:615')
+        # return bottle.jinja2_template('error.html', code=200,
+        #                               message='Your post triggered our spam filters! ERR:615')
     if bottle.request.POST.get('phone', '').strip() != '':
         return bottle.jinja2_template('error.html', code=200,
                                       message='Your post triggered our spam filters! ERR:228')
@@ -177,6 +176,7 @@ def submit_paste():
     bottle.redirect('/' + paste_id)
 
 
+# noinspection PyBroadException
 @app.route('/<paste_id>')
 def view_paste(paste_id):
     """
@@ -254,6 +254,7 @@ def delete_spam(paste_id):
         return 'Error removing paste'
 
 
+# noinspection PyBroadException
 def send_irc(paste, paste_id):
     """
     Send notification to channels
