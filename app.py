@@ -45,26 +45,26 @@ cache = redis.Redis(host=conf.get('bottle', 'cache_host'), db=int(conf.get('bott
 
 @app.route('/static/<filename:path>')
 def static(filename):
-    '''
+    """
     Serve static files
-    '''
+    """
     return bottle.static_file(filename, root='{}/static'.format(conf.get('bottle', 'root_path')))
 
 
 @app.error(500)
 @app.error(404)
 def errors(code):
-    '''
+    """
     Handler for errors
-    '''
+    """
     return bottle.jinja2_template('error.html', code=code)
 
 
 @app.route('/')
 def new_paste():
-    '''
+    """
     Display page for new empty post
-    '''
+    """
     if conf.get('bottle', 'recaptcha_sitekey'):
         template = {'recap_enabled': True, 'sitekey': conf.get('bottle', 'recaptcha_sitekey')}
     else:
@@ -86,9 +86,9 @@ def new_paste():
 
 @app.route('/f/<paste_id>')
 def new_fork(paste_id):
-    '''
+    """
     Display page for new fork from a paste
-    '''
+    """
     if conf.get('bottle', 'recaptcha_sitekey'):
         template = {'recap_enabled': True, 'sitekey': conf.get('bottle', 'recaptcha_sitekey')}
     else:
@@ -110,9 +110,9 @@ def new_fork(paste_id):
 
 @app.route('/', method='POST')
 def submit_paste():
-    '''
+    """
     Put a new paste into the database
-    '''
+    """
     r = re.compile('^[- !$%^&*()_+|~=`{}\[\]:";\'<>?,.\/a-zA-Z0-9]{1,48}$')
     paste = {
         'code': bottle.request.POST.get('code', ''),
@@ -124,22 +124,28 @@ def submit_paste():
 
     # Validate data
     if max(0, bottle.request.content_length) > bottle.request.MEMFILE_MAX:
-        return bottle.jinja2_template('error.html', code=200, message='This request is too large to process. ERR:991')
+        return bottle.jinja2_template('error.html', code=200,
+                                      message='This request is too large to process. ERR:991')
     for k in ['code', 'private', 'syntax', 'name']:
         if paste[k] == '':
-            return bottle.jinja2_template('error.html', code=200, message='All fields need to be filled out. ER:577')
+            return bottle.jinja2_template('error.html', code=200,
+                                          message='All fields need to be filled out. ER:577')
     if not re.match('^[- !$%^&*()_+|~=`{}\[\]:";\'<>?,.\/a-zA-Z0-9]{1,48}$', paste['name']):
-        return bottle.jinja2_template('error.html', code=200, message='Invalid input detected. ERR:925')
+        return bottle.jinja2_template('error.html', code=200,
+                                      message='Invalid input detected. ERR:925')
 
-    # Basic spam checks
-        return bottle.jinja2_template('error.html', code=200, message='Your post triggered our spam filters! ERR:615')
+        # Basic spam checks
+        return bottle.jinja2_template('error.html', code=200,
+                                      message='Your post triggered our spam filters! ERR:615')
     if bottle.request.POST.get('phone', '').strip() != '':
-        return bottle.jinja2_template('error.html', code=200, message='Your post triggered our spam filters! ERR:228')
+        return bottle.jinja2_template('error.html', code=200,
+                                      message='Your post triggered our spam filters! ERR:228')
 
     # More advanced spam checking... eventually
     if str2bool(conf.get('bottle', 'check_spam')):
         if not check_captcha(paste['recaptcha_answer'], bottle.request.environ.get('REMOTE_ADDR')):
-            return bottle.jinja2_template('error.html', code=200, message='Your post triggered our spam filters. ERR:677')
+            return bottle.jinja2_template('error.html', code=200,
+                                          message='Your post triggered our spam filters. ERR:677')
 
     # Public pastes should have an easy to type key
     # Private pastes should have a more secure key
@@ -173,9 +179,9 @@ def submit_paste():
 
 @app.route('/<paste_id>')
 def view_paste(paste_id):
-    '''
+    """
     Return page with paste_id
-    '''
+    """
     paste_id = paste_id
     if not cache.exists('paste:' + paste_id):
         bottle.redirect('/')
@@ -189,7 +195,7 @@ def view_paste(paste_id):
         lexer = get_lexer_by_name('text', stripall=False)
     formatter = HtmlFormatter(linenos=True, cssclass="paste")
     linker = modules.kwlinker.get_linker_by_name(p['syntax'])
-    if None != linker:
+    if linker is not None:
         lexer.add_filter(linker)
         p['code'] = highlight(p['code'], lexer, formatter)
         p['code'] = modules.kwlinker.replace_markup(p['code'])
@@ -202,9 +208,9 @@ def view_paste(paste_id):
 
 @app.route('/r/<paste_id>')
 def view_raw(paste_id):
-    '''
+    """
     View raw paste with paste_id
-    '''
+    """
     if not cache.exists('paste:' + paste_id):
         bottle.redirect('/')
 
@@ -216,11 +222,12 @@ def view_raw(paste_id):
 
 @app.route('/d/<orig>/<fork>')
 def view_diff(orig, fork):
-    '''
+    """
     View the diff between a paste and what it was forked from
-    '''
+    """
     if not cache.exists('paste:' + orig) or not cache.exists('paste:' + fork):
-        return bottle.jinja2_template('error.html', code=200, message='One of the pastes could not be found.')
+        return bottle.jinja2_template('error.html', code=200,
+                                      message='One of the pastes could not be found.')
 
     po = json.loads(cache.get('paste:' + orig))
     pf = json.loads(cache.get('paste:' + fork))
@@ -235,10 +242,10 @@ def view_diff(orig, fork):
 
 @app.route('/thisoneisspam/<paste_id>')
 def delete_spam(paste_id):
-    '''
+    """
     Delete a paste that turns out to have been spam
-    '''
-    #TODO This should eventually require a recaptcha and block IP
+    """
+    # TODO: This should eventually require a recaptcha and block IP
     if not cache.exists(paste_id):
         return 'Paste not found'
     if cache.delete(paste_id):
@@ -248,21 +255,21 @@ def delete_spam(paste_id):
 
 
 def send_irc(paste, paste_id):
-    '''
+    """
     Send notification to channels
-    '''
+    """
     host = conf.get('bottle', 'relay_host')
     port = int(conf.get('bottle', 'relay_port'))
 
     # Build the message to send to the channel
     if paste['forked_from']:
         orig = json.loads(cache.get(paste['forked_from']))
-        message = ''.join(['Paste from ', orig['name'], 
-            ' forked by ', paste['name'], ': [ ',
-            conf.get('bottle', 'url'), paste_id, ' ] - ', paste['title']])
+        message = ''.join(['Paste from ', orig['name'],
+                           ' forked by ', paste['name'], ': [ ',
+                           conf.get('bottle', 'url'), paste_id, ' ] - ', paste['title']])
     else:
         message = ''.join(['Paste from ', paste['name'], ': [ ',
-            conf.get('bottle', 'url'), paste_id, ' ] - ', paste['title']])
+                           conf.get('bottle', 'url'), paste_id, ' ] - ', paste['title']])
 
     # Get list of relay channels
     channels = None
@@ -286,9 +293,9 @@ def send_irc(paste, paste_id):
 
 
 def netcat(hostname, port, content):
-    '''
+    """
     Basic netcat functionality using sockets
-    '''
+    """
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((hostname, port))
     s.sendall(content)
@@ -297,23 +304,23 @@ def netcat(hostname, port, content):
 
 
 def str2bool(v):
-    '''
+    """
     Convert string to boolean
-    '''
+    """
     return v.lower() in ('yes', 'true', 't', 'y', '1', 'on')
 
 
 def str2int(v):
-    '''
+    """
     Convert string to boolean to integer
-    '''
+    """
     return int(v.lower() in ('yes', 'true', 't', 'y', '1', 'on'))
 
 
 def check_captcha(answer, addr=None):
-    '''
+    """
     Returns True if spam was detected
-    '''
+    """
     query = furl('https://www.google.com/recaptcha/api/siteverify')
     query.args['secret'] = conf.get('bottle', 'recaptcha_secret')
     query.args['response'] = answer
