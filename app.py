@@ -336,5 +336,5 @@ def check_captcha(answer, addr=None):
 
 if __name__ == '__main__':
     bottle.run(
-        host='0.0.0.0',
+        host=conf.getint('bottle', 'host'),
         port=conf.getint('bottle', 'port'))
