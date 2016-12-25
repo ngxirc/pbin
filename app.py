@@ -111,7 +111,6 @@ def submit_paste():
     """
     Put a new paste into the database
     """
-    # noinspection PyUnusedLocal
     r = re.compile('^[- !$%^&*()_+|~=`{}\[\]:";\'<>?,./a-zA-Z0-9]{1,48}$')
     paste = {
         'code': bottle.request.POST.get('code', ''),
@@ -129,7 +128,7 @@ def submit_paste():
         if paste[k] == '':
             return bottle.jinja2_template('error.html', code=200,
                                           message='All fields need to be filled out. ER:577')
-    if not re.match('^[- !$%^&*()_+|~=`{}\[\]:";\'<>?,./a-zA-Z0-9]{1,48}$', paste['name']):
+    if not r.match(paste['name']):
         return bottle.jinja2_template('error.html', code=200,
                                       message='Invalid input detected. ERR:925')
 
