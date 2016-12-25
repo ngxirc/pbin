@@ -315,7 +315,7 @@ def str2int(v):
     """
     Convert string to boolean to integer
     """
-    return int(v.lower() in ('yes', 'true', 't', 'y', '1', 'on'))
+    return int(str2bool(v))
 
 
 def check_captcha(answer, addr=None):
