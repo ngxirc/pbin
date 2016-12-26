@@ -25,7 +25,6 @@ conf/settings.cfg::
     [bottle]
     cache_host=localhost
     cache_db=0
-    host=0.0.0.0
     port=80
     root_path=.
     url=http://p.ngx.cc/
