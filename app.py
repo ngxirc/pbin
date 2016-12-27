@@ -17,8 +17,6 @@ import redis
 import requests
 import socket
 
-from furl import furl
-
 # Load Settings
 conf = ConfigParser.SafeConfigParser({
     'cache_host': 'localhost',
@@ -321,13 +319,14 @@ def check_captcha(answer, addr=None):
     """
     Returns True if spam was detected
     """
-    query = furl('https://www.google.com/recaptcha/api/siteverify')
-    query.args['secret'] = conf.get('bottle', 'recaptcha_secret')
-    query.args['response'] = answer
+    provider = 'https://www.google.com/recaptcha/api/siteverify'
+    qs = {
+        'secret': conf.get('bottle', 'recaptcha_secret'),
+        'response': answer}
     if addr:
-        query.args['remoteip'] = addr
+        qs['remoteip'] = addr
 
-    response = requests.post(query.url)
+    response = requests.get(provider, params=qs)
     result = response.json()
 
     return result['success']
