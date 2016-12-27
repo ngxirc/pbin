@@ -153,7 +153,7 @@ def submit_paste():
     paste_id = binascii.b2a_hex(os.urandom(id_length))
 
     # Make sure it's actually unique or else create a new one and test again
-    while cache.exists(paste_id):
+    while cache.exists('paste:' + paste_id):
         id_length += 1
         paste_id = binascii.b2a_hex(os.urandom(id_length))
 
@@ -243,9 +243,9 @@ def delete_spam(paste_id):
     Delete a paste that turns out to have been spam
     """
     # TODO: This should eventually require a recaptcha and block IP
-    if not cache.exists(paste_id):
+    if not cache.exists('paste:' + paste_id):
         return 'Paste not found'
-    if cache.delete(paste_id):
+    if cache.delete('paste:' + paste_id):
         return 'Paste removed'
     else:
         return 'Error removing paste'
@@ -261,7 +261,7 @@ def send_irc(paste, paste_id):
 
     # Build the message to send to the channel
     if paste['forked_from']:
-        orig = json.loads(cache.get(paste['forked_from']))
+        orig = json.loads(cache.get('paste:' + paste['forked_from']))
         message = ''.join(['Paste from ', orig['name'],
                            ' forked by ', paste['name'], ': [ ',
                            conf.get('bottle', 'url'), paste_id, ' ] - ', paste['title']])
