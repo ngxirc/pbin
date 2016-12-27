@@ -1,71 +1,71 @@
 {% extends 'base.html' %}
 
 {% block body %}
-  <form action="/" method="post"><table id="pasteform"><tbody>
+  <form action="/" method="POST" id="pasteform" name="pasteform"><table>
+    <input value="{{ tmpl['secret'] }}" type="hidden" id="lead" name="lead" tabindex="1"/>
+    {% if 'paste_id' in data %}<input type="hidden" name="forked_from" value="{{ data['paste_id'] }}" />{% endif %}
+    <input type="text" name="phone" id="phone" maxlength="32" value="" tabindex="30" />
     <tr>
-      <td>
-        <label for="title">Title</label>
-      </td>
-      <td>
-        <input value="{{ data['title']|e }}" type="text" id="title" name="title" maxlength="32" tabindex="1" required />
-      </td>
-      <td>
-        <label for="name">IRC Nick</label>
-      </td>
-      <td colspan="2">
-        <input type="text" name="name" id="name" maxlength="32" value="{{ data['name']|e }}" tabindex="2" required />
-        <input type="text" name="phone" id="phone" maxlength="32" value="" tabindex="30" />
-      </td>
+      <th><label for="name">Nick:</label></th>
+      <td><input id="name" type="text" name="name" maxlength="30" value="{{ data['name']|e }}" /></td>
+      <th><label for="syntax">Syntax:</label></th>
+      <td><select name="syntax" id="syntax">
+            <option value="nginx">Nginx Config</option>
+            <option value="html">HTML</option>
+            <option value="text">Plain Text</option>
+            <option value="0">-----------------</option>
+            <option value="apache">Apache</option>
+            <option value="bash">Bash</option>
+            <option value="c">C</option>
+            <option value="css">CSS</option>
+            <option value="javascript">JavaScript</option>
+            <option value="lua">Lua</option>
+            <option value="mysql">MySQL</option>
+            <option value="pcre">PCRE</option>
+            <option value="perl">Perl</option>
+            <option value="php">PHP</option>
+            <option value="postgresql">PostgreSQL</option>
+            <option value="python">Python</option>
+            <option value="ruby">Ruby</option>
+            <option value="sql">SQL</option>
+            <option value="xml">XML</option>
+          </select></td>
     </tr>
     <tr>
-      <td>
-        <label for="code">Code</label>
-      </td>
-      <td colspan="4">
-        <textarea id="code" name="code" cols="60" rows="20" tabindex="3" required>{{ data['code']|e }}</textarea>
-      </td>
+      <th><label for="code">Code:</label></th>
+      <td colspan="3"><textarea id="code" rows="20" cols="80" name="code">{{ data['code']|e }}</textarea></td>
     </tr>
-    <tr>
-      <td>
-        <label for="syntax">Syntax</label>
-      </td>
-      <td>
-        <select name="syntax" id="syntax" class="select" tabindex="4">
-          <option value="nginx">Nginx Config</option>
-          <option value="html">HTML</option>
-          <option value="text">Plain Text</option>
-          <option value="0">-----------------</option>
-          <option value="apache">Apache</option>
-          <option value="bash">Bash</option>
-          <option value="c">C</option>
-          <option value="css">CSS</option>
-          <option value="javascript">JavaScript</option>
-          <option value="lua">Lua</option>
-          <option value="mysql">MySQL</option>
-          <option value="pcre">PCRE</option>
-          <option value="perl">Perl</option>
-          <option value="php">PHP</option>
-          <option value="postgresql">PostgreSQL</option>
-          <option value="python">Python</option>
-          <option value="ruby">Ruby</option>
-          <option value="sql">SQL</option>
-          <option value="xml">XML</option>
-        </select>
-      </td>
-      <td>
-        <label class="check" for="private">Private</label>
-      </td>
-      <td>
-        <input type="checkbox" name="private"{% if data['private'] == '1' %}checked="checked" {% endif %} id="private" tabindex="5" />
-      </td>
-      <td style="text-align: right;">
-        {% if 'paste_id' in data %}
-        <input type="hidden" name="forked_from" value="{{ data['paste_id'] }}" />
-        {% endif %}
-        <button type="submit" value="submit" name="submit" tabindex="6">Create Paste</button>
-      </td>
+    <tr> 
+      <th>&nbsp;</th>
+      <td><input type="submit" value="Paste!" /> </td>
+      <th><label for="private">Private</label></th> 
+      <td><input type="checkbox" name="private"{% if data['private'] == '1' %}checked="checked" {% endif %} id="private" tabindex="5" /></td>
     </tr>
-  </tbody></table></form>
+    {% if tmpl['recap_enabled'] %}<tr><th>&nbsp;</th><td>
+      <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+      <div class="g-recaptcha" data-sitekey="{{ tmpl['sitekey'] }}"></div>
+      <noscript>
+        <div>
+          <div style="width: 302px; height: 422px; position: relative;">
+            <div style="width: 302px; height: 422px; position: absolute;">
+              <iframe src="https://www.google.com/recaptcha/api/fallback?k={{ tmpl['sitekey'] }}"
+                      frameborder="0" scrolling="no"
+                      style="width: 302px; height:422px; border-style: none;">
+              </iframe>
+            </div>
+          </div>
+          <div style="width: 300px; height: 60px; border-style: none;
+                         bottom: 12px; left: 25px; margin: 0px; padding: 0px; right: 25px;
+                         background: #f9f9f9; border: 1px solid #c1c1c1; border-radius: 3px;">
+            <textarea id="g-recaptcha-response" name="g-recaptcha-response"
+                         class="g-recaptcha-response"
+                         style="width: 250px; height: 40px; border: 1px solid #c1c1c1;
+                         margin: 10px 25px; padding: 0px; resize: none;" ></textarea>
+          </div>
+        </div>
+      </noscript>
+    </td></tr>{% endif %}
+  </table></form>
   <p class="note">
     All fields are required. Your paste will be deleted after four days.
     <br />If you are not posting this for use in the IRC channel, please check Private.

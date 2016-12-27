@@ -1,2 +1,5 @@
 *.pyc
 conf/settings.cfg
+
+# PyCharm IDE
+.idea/

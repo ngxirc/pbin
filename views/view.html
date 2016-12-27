@@ -1,15 +1,11 @@
 {% extends 'base.html' %}
 
 {% block head %}
-  <style>{{ paste['css'] }}
-  .code { background: #ffffff;}</style>
+  <style>{{ paste['css'] }}</style>
 {% endblock %}
 
 {% block body %}
   <div class="bar">
-    <div class="title">
-      Title: <strong>{{ paste['title']|e }}</strong>
-    </div>
     <div class="author">
       Author: <strong>{{ paste['name']|e }}</strong>
     </div>
@@ -19,10 +15,10 @@
   </div>
   <div class="bar">
     <div class="syntax">
-      Syntax: <strong>{{ paste['syntax']|e }}</strong>
+      Syntax: <strong>{{ paste['syntax']|e }}</strong>&nbsp;|&nbsp;
     </div>
     <div class="options">
-      <a href="/r/{{ pid }}">Raw</a>
+      <a href="/r/{{ pid }}">Raw</a>&nbsp;|&nbsp;
     </div>
     {% if 'forked_from' in paste and paste['forked_from'] %}
     <div class="options">
@@ -30,7 +26,7 @@
     </div>
     {% endif %}
     <div class="options">
-      <a href="/f/{{ pid }}">Fork</a>&nbsp;|&nbsp;
+      <a href="/f/{{ pid }}">Fork</a>
     </div>
   </div>
 {% endblock %}
