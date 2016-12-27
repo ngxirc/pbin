@@ -125,7 +125,7 @@ def submit_paste():
         if paste[k] == '':
             return bottle.jinja2_template('error.html', code=200,
                                           message='All fields need to be filled out. ER:577')
-    if not re.match(r'^[a-zA-Z\[\]\\{}|`-_][a-zA-Z0-9\[\]\\{}|`\-_]*$', paste['name']):
+    if not re.match(r'^[a-zA-Z\[\]\\{}|`\-_][a-zA-Z0-9\[\]\\{}|`\-_]*$', paste['name']):
         return bottle.jinja2_template('error.html', code=200,
                                       message='Invalid input detected. ERR:925')
 
