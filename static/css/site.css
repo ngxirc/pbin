@@ -108,7 +108,8 @@ div.code a {
 }
 
 .linecount:hover {
-  background: #f8f8f8;
+  background: #9999aa;
+  display: block;
 }
 
 #phone {
