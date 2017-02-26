@@ -51,7 +51,7 @@ class HtmlLineFormatter(HtmlFormatter):
         i = self.linenostart
         for t, line in source:
             if t == 1:
-                line = '<span id="LC%d">%s</span>' % (i, line)
+                line = '<span class="linecount" id="LC%d">%s</span>' % (i, line)
                 i += 1
             yield t, line
 

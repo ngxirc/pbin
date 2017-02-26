@@ -107,6 +107,10 @@ div.code a {
   padding: 1em;
 }
 
+.linecount:hover {
+  color: #f8f8f8;
+}
+
 #phone {
   visibility: hidden;
 }
