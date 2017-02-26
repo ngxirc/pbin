@@ -37,6 +37,24 @@ conf.read('conf/settings.cfg')
 app = application = bottle.Bottle()
 cache = redis.Redis(host=conf.get('bottle', 'cache_host'), db=int(conf.get('bottle', 'cache_db')))
 
+class HtmlLineFormatter(HtmlFormatter):
+    """
+    Output as html and wrap each line in a span
+    """
+    name = 'Html with line wrap'
+    aliases = ['htmlline']
+
+    def wrap(self, source, outfile):
+        return self._wrap_div(self._wrap_pre(self._wrap_lines(source)))
+
+    def _wrap_lines(self, source):
+        i = self.linenostart
+        for t, line in source:
+            if t == 1:
+                line = '<span id="LC%d">%s</span>' % (i, line)
+                i += 1
+            yield t, line
+
 
 # noinspection PyUnresolvedReferences
 @app.route('/static/<filename:path>')
@@ -189,7 +207,7 @@ def view_paste(paste_id):
         lexer = get_lexer_by_name(p['syntax'], stripall=False)
     except:
         lexer = get_lexer_by_name('text', stripall=False)
-    formatter = HtmlFormatter(linenos=True, cssclass="paste")
+    formatter = HtmlLineFormatter(linenos=True, cssclass="paste")
     linker = modules.kwlinker.get_linker_by_name(p['syntax'])
     if linker is not None:
         lexer.add_filter(linker)
@@ -197,7 +215,7 @@ def view_paste(paste_id):
         p['code'] = modules.kwlinker.replace_markup(p['code'])
     else:
         p['code'] = highlight(p['code'], lexer, formatter)
-    p['css'] = HtmlFormatter().get_style_defs('.code')
+    p['css'] = HtmlLineFormatter().get_style_defs('.code')
 
     return bottle.jinja2_template('view.html', paste=p, pid=paste_id)
 
