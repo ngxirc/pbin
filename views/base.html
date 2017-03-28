@@ -23,7 +23,7 @@
     <div id="outerColumnContainer" style="color: #00000">
       <div id="contentColumn">
         <div class="inside">
-          <a href="/" rel="home" id="title"><img src="/static/images/logo.png" alt={% if title %}{{ title }}{% else %}ngx pastebin{% endif %}"></a>
+          <a href="/" rel="home" id="title"><img src="/static/images/logo.png" alt="{% if title %}{{ title }}{% else %}ngx pastebin{% endif %}"/></a>
           <hr />
           {% block body %}{% endblock %}
         </div>
