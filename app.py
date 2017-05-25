@@ -28,6 +28,8 @@ conf = ConfigParser.SafeConfigParser({
     'relay_enabled': True,
     'relay_chan': None,
     'relay_admin_chan': None,
+    'relay_port': 5050,
+    'relay_pass': 'nil',
     'recaptcha_sitekey': None,
     'recaptcha_secret': None,
     'check_spam': False,
@@ -275,16 +277,17 @@ def send_irc(paste, paste_id):
     """
     host = conf.get('bottle', 'relay_host')
     port = int(conf.get('bottle', 'relay_port'))
+    pw = conf.get('bottle', 'relay_pass')
 
     # Build the message to send to the channel
     if paste['forked_from']:
         orig = json.loads(cache.get('paste:' + paste['forked_from']))
         message = ''.join(['Paste from ', orig['name'],
                            ' forked by ', paste['name'], ': [ ',
-                           conf.get('bottle', 'url'), paste_id, ' ] - ', paste['title']])
+                           conf.get('bottle', 'url'), paste_id, ' ]'])
     else:
         message = ''.join(['Paste from ', paste['name'], ': [ ',
-                           conf.get('bottle', 'url'), paste_id, ' ] - ', paste['title']])
+                           conf.get('bottle', 'url'), paste_id, ' ]'])
 
     # Get list of relay channels
     channels = None
@@ -298,24 +301,15 @@ def send_irc(paste, paste_id):
             channels = conf.get('bottle', 'relay_chan')
 
     # For each channel, send the relay server a message
+    # Note: Irccat does not use traditional channel names
     if channels:
         for channel in channels.split(','):
-            nc_msg = ''.join([channel, ' ', message])
             try:
-                netcat(host, port, nc_msg)
+                s = socket.create_connection((host, port))
+                s.send('{};{};{}\n'.format(channel, pw, message))
+                s.close()
             except:
-                pass
-
-
-def netcat(hostname, port, content):
-    """
-    Basic netcat functionality using sockets
-    """
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((hostname, port))
-    s.sendall(content)
-    s.shutdown(socket.SHUT_WR)
-    s.close()
+                print('Unable to send message to channel: {}'.format(channel))
 
 
 def str2bool(v):
