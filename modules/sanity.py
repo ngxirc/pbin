@@ -89,6 +89,32 @@ def whitelist_address(cache, addr):
     if not subnet:
         return False
     cache.delete('ipblock:{}'.format(utils.sha512(subnet)))
+    cache.delete('ipgrey:{}'.format(utils.sha512(subnet)))
+    return True
+
+
+def address_greylisted(cache, addr):
+    '''
+    Returns True if address is currently greylisted.
+    '''
+    subnet = _addr_subnet(addr)
+    if not subnet:
+        # Fail open?
+        return None
+    if cache.exists('ipgrey:{}'.format(utils.sha512(subnet))):
+        return True
+    return False
+
+
+def greylist_address(cache, addr):
+    '''
+    Add an address to grey listing: don't block, don't relay.
+    Returns True if successfully added or False if error encountered.
+    '''
+    subnet = _addr_subnet(addr)
+    if not subnet:
+        return False
+    cache.setex('ipgrey:{}'.format(utils.sha512(subnet)), 'nil', 345600)
     return True
 
 

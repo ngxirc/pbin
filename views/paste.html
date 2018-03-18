@@ -4,6 +4,7 @@
   <form action="/" method="POST" id="pasteform" name="pasteform"><table>
     <input value="{{ tmpl['secret'] }}" type="hidden" id="lead" name="lead" tabindex="1"/>
     {% if 'paste_id' in data %}<input type="hidden" name="forked_from" value="{{ data['paste_id'] }}" />{% endif %}
+    <input type="hidden" name="webform" id="webform" value="yes" />
     <input type="text" name="phone" id="phone" maxlength="32" value="" tabindex="30" />
     <tr>
       <th><label for="name">Nick:</label></th>

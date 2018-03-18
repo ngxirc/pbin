@@ -120,9 +120,10 @@ def submit_new(conf, cache):
         'private': bottle.request.POST.get('private', '0').strip(),
         'syntax': bottle.request.POST.get('syntax', '').strip(),
         'forked_from': bottle.request.POST.get('forked_from', '').strip(),
+        'webform': bottle.request.POST.get('webform', '').strip(),
         'origin_addr': bottle.request.environ.get('REMOTE_ADDR', 'undef').strip(),
         'recaptcha_answer': bottle.request.POST.get('g-recaptcha-response', '').strip()}
-    cli_post = True if paste_data['recaptcha_answer'] == '' else False
+    cli_post = True if paste_data['webform'] == '' else False
 
     # Handle file uploads
     if type(paste_data['code']) == bottle.FileUpload:
@@ -140,8 +141,7 @@ def submit_new(conf, cache):
         if not sanity.check_captcha(
                 conf.get('bottle', 'recaptcha_secret'),
                 paste_data['recaptcha_answer']):
-            return bottle.jinja2_template('error.html', code=200,
-                                          message='Your post triggered our spam filters. ERR:677')
+            return bottle.jinja2_template('error.html', code=200, message='Invalid captcha verification. ERR:677')
 
     # Check address against blacklist
     if sanity.address_blacklisted(cache, paste_data['origin_addr']):
@@ -165,7 +165,7 @@ def submit_new(conf, cache):
         return '{}://{}/{}\n'.format(scheme, host, paste_id)
     else:
         # Relay message to IRC
-        if utils.str2bool(conf.get('bottle', 'relay_enabled')):
+        if utils.str2bool(conf.get('bottle', 'relay_enabled')) and not sanity.address_greylisted(cache, paste_data['origin_addr']):
             irc.send_message(conf, paste_data, paste_id)
         bottle.redirect('/' + paste_id)
 
