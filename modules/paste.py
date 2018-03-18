@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# local imports
+import irc
 import kwlinker
 import sanity
 import utils
@@ -118,6 +120,7 @@ def submit_new(conf, cache):
         'private': bottle.request.POST.get('private', '0').strip(),
         'syntax': bottle.request.POST.get('syntax', '').strip(),
         'forked_from': bottle.request.POST.get('forked_from', '').strip(),
+        'origin_addr': bottle.request.environ.get('REMOTE_ADDR', 'undef').strip(),
         'recaptcha_answer': bottle.request.POST.get('g-recaptcha-response', '').strip()}
     cli_post = True if paste_data['recaptcha_answer'] == '' else False
 
@@ -139,6 +142,10 @@ def submit_new(conf, cache):
                 paste_data['recaptcha_answer']):
             return bottle.jinja2_template('error.html', code=200,
                                           message='Your post triggered our spam filters. ERR:677')
+
+    # Check address against blacklist
+    if sanity.address_blacklisted(cache, paste_data['origin_addr']):
+        return bottle.jinja2_template('error.html', code=200, message='Address blacklisted. ERR:840')
 
     # Stick paste into cache
     paste_id = _write_paste(cache, paste_data)
@@ -185,7 +192,6 @@ def _write_paste(cache, paste_data):
         paste_id = binascii.b2a_hex(os.urandom(id_length))
 
     # Put the paste into cache
-    cache.set('paste:' + paste_id, json.dumps(paste_data))
-    cache.expire('paste:' + paste_id, 345600)
+    cache.setex('paste:' + paste_id, json.dumps(paste_data), 345600)
 
     return paste_id

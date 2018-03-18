@@ -1,8 +1,13 @@
 #!/usr/bin/env python
 
+# local imports
+import utils
+
+import cymruwhois
 import bottle
 import requests
 import re
+
 
 def validate_data(conf, paste_data):
     '''
@@ -48,3 +53,51 @@ def check_captcha(secret, answer, addr=None):
     result = response.json()
 
     return result['success']
+
+
+def address_blacklisted(cache, addr):
+    '''
+    Returns True if address is currently blacklisted.
+    '''
+    subnet = _addr_subnet(addr)
+    if not subnet:
+        # Fail open?
+        return None
+    if cache.exists('ipblock:{}'.format(utils.sha512(subnet))):
+        return True
+    return False
+
+
+def blacklist_address(cache, addr):
+    '''
+    Add address to blacklist.
+    Returns True if successfully added or False if error encountered.
+    '''
+    subnet = _addr_subnet(addr)
+    if not subnet:
+        return False
+    cache.setex('ipblock:{}'.format(utils.sha512(subnet)), 'nil', 345600)
+    return True
+
+
+def whitelist_address(cache, addr):
+    '''
+    Remove address from blacklist.
+    Returns True if successfully removed or False if error encountered.
+    '''
+    subnet = _addr_subnet(addr)
+    if not subnet:
+        return False
+    cache.delete('ipblock:{}'.format(utils.sha512(subnet)))
+    return True
+
+
+def _addr_subnet(addr):
+    '''
+    Returns a subnet for an address.
+    '''
+    client = cymruwhois.Client()
+    try:
+        return client.lookup(addr).prefix
+    except:
+        return None

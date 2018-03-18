@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+# local imports
 import modules.admin as admin
 import modules.irc as irc
 import modules.paste as paste
@@ -93,7 +94,7 @@ def view_raw(paste_id):
     '''
     data = paste.get_paste(cache, paste_id, raw=True)
     bottle.response.add_header('Content-Type', 'text/plain; charset=utf-8')
-    return data
+    return data['code']
 
 
 @app.route('/d/<orig>/<fork>')
