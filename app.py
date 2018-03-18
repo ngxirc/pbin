@@ -116,7 +116,7 @@ def exec_admin():
 
 @app.route('/about')
 def show_info():
-    return bottle.jinja2_template('about.html', code=code)
+    return bottle.jinja2_template('about.html')
 
 
 if __name__ == '__main__':

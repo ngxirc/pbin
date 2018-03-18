@@ -25,11 +25,9 @@
   <h3>Using Curl</h3>
   The best way to provide a complete picture of what's going on looks like this:
   <br /><i>curl -X POST -F 'name=MTeck' -F 'syntax=nginx' -F "code=$(nginx -T)" https://paste.ngx.cc/</i>
-
-  Single config files can be uploaded:
+  <br /><br />Single config files can be uploaded:
   <br /><i>curl -X POST -F 'name=MTeck' -F 'syntax=nginx' -F 'code=@/etc/nginx/conf.d/mysite.conf' https://paste.ngx.cc/</i>
-
-  It's also possible to provide logs this way:
+  <br /><br />It's also possible to provide logs this way:
   <br /><i>curl -X POST -F 'name=MTeck' -F 'syntax=nginx' -F "code=$(tail -n 100 /var/log/nginx/*.log)" https://paste.ngx.cc/</i>
 
   <p class="note">
