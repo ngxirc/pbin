@@ -9,19 +9,27 @@ def validate_data(conf, paste_data):
     Basic data validation.
     Returns (valid, error_message).
     '''
+    codetype = type(paste_data['code'])
+    error = None
+
     if max(0, bottle.request.content_length) > bottle.request.MEMFILE_MAX:
-        return (False, 'This request is too large to process. ERR:991')
+        error = 'This request is too large to process. ERR:991'
+
+    elif codetype != str and codetype != bottle.FileUpload:
+        error = 'Invalid code type submitted. ERR:280'
+
+    elif not re.match(r'^[a-zA-Z\[\]\\{}|`\-_][a-zA-Z0-9\[\]\\{}|`\-_]*$', paste_data['name']):
+        error = 'Invalid input detected. ERR:925'
+
+    elif paste_data['phone'] != '':
+        error = 'Your post triggered our spam filters! ERR:228'
 
     for k in ['code', 'private', 'syntax', 'name']:
         if paste_data[k] == '':
-            return (False, 'All fields need to be filled out. ER:577')
+            error = 'All fields need to be filled out. ERR:577'
 
-    if not re.match(r'^[a-zA-Z\[\]\\{}|`\-_][a-zA-Z0-9\[\]\\{}|`\-_]*$', paste_data['name']):
-        return (False, 'Invalid input detected. ERR:925')
-
-    if paste_data['phone'] != '':
-        return (False, 'Your post triggered our spam filters! ERR:228')
-
+    if error:
+        return (False, error)
     return (True, None)
 
 

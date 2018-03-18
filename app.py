@@ -114,6 +114,11 @@ def exec_admin():
     return admin.run_cmd(conf, cache)
 
 
+@app.route('/about')
+def show_info():
+    return bottle.jinja2_template('about.html', code=code)
+
+
 if __name__ == '__main__':
     bottle.run(
         host='0.0.0.0',

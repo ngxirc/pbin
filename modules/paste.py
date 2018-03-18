@@ -121,6 +121,12 @@ def submit_new(conf, cache):
         'recaptcha_answer': bottle.request.POST.get('g-recaptcha-response', '').strip()}
     cli_post = True if paste_data['recaptcha_answer'] == '' else False
 
+    # Handle file uploads
+    if type(paste_data['code']) == bottle.FileUpload:
+        paste_data['code'] = '# FileUpload: {}\n{}'.format(
+                paste_data['code'].filename,
+                paste_data['code'].file.getvalue())
+
     # Validate data
     (valid, err) = sanity.validate_data(conf, paste_data)
     if not valid:
@@ -147,10 +153,9 @@ def submit_new(conf, cache):
 
     # Send user to page, or a link to page
     if cli_post:
-        # TODO scheme = bottle.request.get_header('')
-        scheme = 'https'
+        scheme = bottle.request.environ.get('REQUEST_SCHEME')
         host = bottle.request.get_header('host')
-        return '{}://{}/{}'.format(scheme, host, paste_id)
+        return '{}://{}/{}\n'.format(scheme, host, paste_id)
     else:
         # Relay message to IRC
         if utils.str2bool(conf.get('bottle', 'relay_enabled')):
@@ -166,7 +171,9 @@ def _write_paste(cache, paste_data):
     # Public pastes should have an easy to type key
     # Private pastes should have a more secure key
     id_length = 1
-    if utils.str2bool(paste_data['private']):
+    if paste_data['recaptcha_answer'] == '':
+        id_length = 12
+    elif utils.str2bool(paste_data['private']):
         id_length = 8
 
     # Pick a unique ID

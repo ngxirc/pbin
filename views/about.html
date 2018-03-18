@@ -22,6 +22,11 @@
     <li>More...</li>
   </ul>
 
+  <h3>Using Curl</h3>
+  Using curl is as simple as...
+  <br /><i>curl -X POST -F 'name=MTeck' -F 'syntax=nginx' -F 'private=1' -F "code=$(nginx -T)" https://paste.ngx.cc/</i>
+  <br /><i>curl -X POST -F 'name=MTeck' -F 'syntax=nginx' -F 'private=1' -F "code=@/etc/nginx/conf.d/mysite.conf" https://paste.ngx.cc/</i>
+
   <p class="note">
     If you have any questions or concerns about this, please check out the
     <a href="https://github.com/ngx/pbin">project page</a>.
