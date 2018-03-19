@@ -29,33 +29,44 @@ def run_cmd(conf, cache):
     err = None
     if not admin_key:
         err = 'No admin key configured.'
-    elif not 'token' in data:
+    elif not data:
+        err = 'No payload decoded.'
+    elif 'token' not in data:
         err = 'No auth provided.'
     elif data['token'] != admin_key:
         err = 'Invalid auth.'
-    elif 'cmd' not in data:
+    elif 'command' not in data:
         err = 'No command provided.'
-    elif data['cmd'] not in commands:
+    elif data['command'] not in commands:
         err = 'Command not supported.'
     if err:
         return {'message': err, 'status': 'error'}
 
     # Flight
-    return commands[data['cmd']](cache, data)
+    bottle.response.headers['Content-Type'] = 'application/json'
+    resp = commands[data['command']](cache, data)
+    return json.dumps(resp)
 
 
 def _cmd_blacklist_paste(cache, data):
     # Delete paste
-    _cmd_delete_paste(cache, data)
+    _ = _delete_paste(cache, data)
 
     # Block address
     addr = bottle.request.environ.get('REMOTE_ADDR', 'undef').strip()
     if sanity.blacklist_address(cache, addr):
-        return {'message': 'Address "{}" blacklisted; paste removed.'.format(addr), 'status': 'success'}
+        return {'message': 'Added to black list; paste removed.'.format(addr), 'status': 'success'}
     return {'message': 'unexpected error; task already complete?', 'status': 'error'}
 
 
 def _cmd_delete_paste(cache, data):
+    ret = _delete_paste(cache, data)
+    if ret:
+        return ret
+    return {'message': 'Paste deleted.', 'status': 'success'}
+
+
+def _delete_paste(cache, data):
     paste = data.get('target')
     if not paste:
         return {'message': 'No paste provided.', 'status': 'error'}
@@ -77,7 +88,7 @@ def _cmd_whitelist_address(cache, data):
         return {'message': 'No address provided.', 'status': 'error'}
 
     if sanity.whitelist_address(cache, addr):
-        return {'message': 'Address subnet white listed.', 'status': 'success'}
+        return {'message': 'Removed from filtering.', 'status': 'success'}
     return {'message': 'unexpected error; task already complete?', 'status': 'error'}
 
 
@@ -88,15 +99,15 @@ def _cmd_greylist_address(cache, data):
     paste = data.get('target')
     if not paste:
         return {'message': 'No paste provided.', 'status': 'error'}
-    paste_id = 'paste:{}'.format(data['paste'])
+    paste_id = 'paste:{}'.format(paste)
 
     # Find paste origin address
-    paste = cache.get(paste_id)
-    if not paste:
+    cpaste = cache.get(paste_id)
+    if not cpaste:
         return {'message': 'Paste not found.', 'status': 'error'}
-    addr = json.loads(paste)['origin_addr']
+    addr = json.loads(cpaste)['origin_addr']
 
     # Greylist address
     if sanity.greylist_address(cache, addr):
-        return {'message': 'Address subnet grey listed.', 'status': 'success'}
+        return {'message': 'Added to grey lis.', 'status': 'success'}
     return {'message': 'unexpected error; task already complete?', 'status': 'error'}
