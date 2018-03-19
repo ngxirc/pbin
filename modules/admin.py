@@ -56,10 +56,10 @@ def _cmd_blacklist_paste(cache, data):
 
 
 def _cmd_delete_paste(cache, data):
-    paste = data.get('paste')
+    paste = data.get('target')
     if not paste:
         return {'msg': 'No paste provided.', 'status': 'error'}
-    paste_id = 'paste:{}'.format(data['paste'])
+    paste_id = 'paste:{}'.format(data['target'])
 
     # Find paste origin address
     paste = cache.get(paste_id)
@@ -72,7 +72,7 @@ def _cmd_delete_paste(cache, data):
 
 
 def _cmd_whitelist_address(cache, data):
-    addr = data.get('address')
+    addr = data.get('target')
     if not addr:
         return {'msg': 'No address provided.', 'status': 'error'}
 
@@ -85,7 +85,7 @@ def _cmd_greylist_address(cache, data):
     '''
     Don't block an address from using the service, but disable IRC relay.
     '''
-    paste = data.get('paste')
+    paste = data.get('target')
     if not paste:
         return {'msg': 'No paste provided.', 'status': 'error'}
     paste_id = 'paste:{}'.format(data['paste'])
