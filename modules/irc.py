@@ -3,10 +3,11 @@
 # local imports
 import utils
 
+import json
 import socket
 
 
-def send_message(conf, paste, paste_id):
+def send_message(conf, cache, paste, paste_id):
     '''
     Send notification to channels
     '''
