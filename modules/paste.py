@@ -51,17 +51,18 @@ def new_paste(conf, cache=None, paste_id=None):
         'syntax': 'nginx',
         'private': '0'}
 
-    cookie = bottle.request.cookies.get('dat', None)
-    if cookie:
-        data.update(json.loads(cookie))
-        data['private'] = str(utils.str2int(data['private']))
-
     if paste_id and cache:
         paste = json.loads(cache.get('paste:' + paste_id))
         if paste:
             data.update(paste)
             data['paste_id'] = paste_id
             data['private'] = str(utils.str2int(paste['private']))
+            data['name'] = ''
+
+    cookie = bottle.request.cookies.get('dat', None)
+    if cookie:
+        data.update(json.loads(cookie))
+        data['private'] = str(utils.str2int(data['private']))
 
     return (data, template)
 
