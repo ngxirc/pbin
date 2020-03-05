@@ -8,31 +8,31 @@ import modules.sanity as sanity
 import modules.utils as utils
 
 import bottle
-import ConfigParser
+import configparser
 import redis
 
 # Load Settings
-conf = ConfigParser.SafeConfigParser({
+conf = configparser.ConfigParser({
     'cache_host': 'localhost',
     'cache_db': 0,
     'cache_ttl': 360,
     'port': 80,
     'root_path': '.',
-    'url': None,
+    'url': '',
     'relay_enabled': True,
-    'relay_chan': None,
-    'relay_admin_chan': None,
+    'relay_chan': '',
+    'relay_admin_chan': '',
     'relay_port': 5050,
     'relay_pass': 'nil',
-    'recaptcha_sitekey': None,
-    'recaptcha_secret': None,
+    'recaptcha_sitekey': '',
+    'recaptcha_secret': '',
     'check_spam': False,
-    'admin_key': None,
+    'admin_key': '',
     'python_server': 'auto'})
 conf.read('conf/settings.cfg')
 
 app = application = bottle.Bottle()
-cache = redis.Redis(host=conf.get('bottle', 'cache_host'), db=int(conf.get('bottle', 'cache_db')))
+cache = redis.StrictRedis(host=conf.get('bottle', 'cache_host'), db=int(conf.get('bottle', 'cache_db')))
 
 
 @app.route('/static/<filename:path>')

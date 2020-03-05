@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # local imports
-import utils
+from . import utils
 
 import json
 import socket

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # local imports
-import sanity
+from . import sanity
 
 import bottle
 import json

@@ -1,9 +1,9 @@
 import re
 
-import html
-import nginx
-import php
-import css
+from . import html
+from . import nginx
+from . import php
+from . import css
 
 from pygments.filter import simplefilter
 from pygments.token import Token
@@ -11,7 +11,7 @@ from pygments.token import Token
 @simplefilter
 def logging_linker(self, lexer, stream, options):
     for ttype, value in stream:
-        print "value: '%s'  ttype: '%s'" % (value, ttype)
+        print("value: '{}'  ttype: '{}'".format(value, ttype))
         yield ttype, value
 
 def get_linker_by_name(name):

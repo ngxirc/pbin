@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # local imports
-import utils
+from . import utils
 
 import cymruwhois
 import bottle
@@ -124,6 +124,7 @@ def _addr_subnet(addr):
     '''
     client = cymruwhois.Client()
     try:
-        return client.lookup(addr).prefix
+        resp = client.lookup(addr)
+        return resp.prefix
     except:
         return None

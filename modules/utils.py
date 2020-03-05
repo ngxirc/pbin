@@ -21,4 +21,4 @@ def sha512(v):
     '''
     Returns a sha512 checksum for provided value.
     '''
-    return hashlib.sha512(v).hexdigest()
+    return hashlib.sha512(v.encode('utf-8')).hexdigest()

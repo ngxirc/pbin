@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 # local imports
-import irc
-import kwlinker
-import sanity
-import utils
+from . import irc
+from . import kwlinker
+from . import sanity
+from . import utils
 
 from pygments import highlight
 from pygments.lexers import *
@@ -185,14 +185,14 @@ def _write_paste(cache, paste_data):
         id_length = 8
 
     # Pick a unique ID
-    paste_id = binascii.b2a_hex(os.urandom(id_length))
+    paste_id = binascii.b2a_hex(os.urandom(id_length)).decode('utf-8')
 
     # Make sure it's actually unique or else create a new one and test again
     while cache.exists('paste:' + paste_id):
         id_length += 1
-        paste_id = binascii.b2a_hex(os.urandom(id_length))
+        paste_id = binascii.b2a_hex(os.urandom(id_length)).decode('utf-8')
 
     # Put the paste into cache
-    cache.setex('paste:' + paste_id, json.dumps(paste_data), 345600)
+    cache.setex('paste:' + paste_id, 345600, json.dumps(paste_data))
 
     return paste_id
