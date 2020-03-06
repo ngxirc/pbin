@@ -24,11 +24,11 @@
 
   <h3>Using Curl</h3>
   The best way to provide a complete picture of what's going on looks like this:
-  <br /><i>curl -X POST -F 'name=$your_nick' -F 'syntax=nginx' -F "code=$(nginx -T)" https://paste.ngx.cc/</i>
+  <br /><i>curl -X POST -F 'name=$your_nick' -F 'syntax=nginx' -F "code=$(nginx -T)" https://paste.nginx.org/</i>
   <br /><br />Single config files can be uploaded:
-  <br /><i>curl -X POST -F 'name=$your_nick' -F 'syntax=nginx' -F 'code=@/etc/nginx/conf.d/mysite.conf' https://paste.ngx.cc/</i>
+  <br /><i>curl -X POST -F 'name=$your_nick' -F 'syntax=nginx' -F 'code=@/etc/nginx/conf.d/mysite.conf' https://paste.nginx.org/</i>
   <br /><br />It's also possible to provide logs this way:
-  <br /><i>curl -X POST -F 'name=$your_nick' -F 'syntax=nginx' -F "code=$(tail -n 100 /var/log/nginx/*.log)" https://paste.ngx.cc/</i>
+  <br /><i>curl -X POST -F 'name=$your_nick' -F 'syntax=nginx' -F "code=$(tail -n 100 /var/log/nginx/*.log)" https://paste.nginx.org/</i>
 
   <p class="note">
     If you have any questions or concerns about this, please check out the
