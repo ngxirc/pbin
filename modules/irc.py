@@ -42,7 +42,7 @@ def send_message(conf, cache, paste, paste_id):
         for channel in channels.split(','):
             try:
                 s = socket.create_connection((host, port))
-                s.send('{};{};{}\n'.format(channel, pw, message))
+                s.send('{};{};{}\n'.format(channel, pw, message).encode())
                 s.close()
             except:
                 print('Unable to send message to channel: {}'.format(channel))
