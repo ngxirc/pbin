@@ -1,6 +1,6 @@
 # Ngx CC Pbin Service
 
-This tiny pastebin service is written in with [bottle][].
+This tiny pastebin service is written in python with [bottle](https://bottlepy.org/).
 
 What makes this one different?
 
