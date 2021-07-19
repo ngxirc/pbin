@@ -28,7 +28,7 @@ def get_linker_by_name(name):
     return None
 
 _lnk_replacements = {
-    '_LNK_B_': '<a href="http://',
+    '_LNK_B_': '<a href="https://',
     '_LNK_M_': '" target="_blank">',
     '_LNK_E_': '</a>',
     '_LNK__': '_LNK_',
