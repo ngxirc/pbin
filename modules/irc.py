@@ -25,24 +25,14 @@ def send_message(conf, cache, paste, paste_id):
         message = ''.join(['Paste from ', paste['name'], ': [ ',
                            conf.get('bottle', 'url'), paste_id, ' ]'])
 
-    # Get list of relay channels
-    channels = None
-    # Always admin channels, only normal channels if paste is not private
-    if conf.get('bottle', 'relay_admin_chan') is not None:
-        channels = conf.get('bottle', 'relay_admin_chan')
-        if conf.get('bottle', 'relay_chan') is not None and not utils.str2bool(paste['private']):
-            channels = ''.join([channels, ',', conf.get('bottle', 'relay_chan')])
-    else:
-        if conf.get('bottle', 'relay_chan') is not None and not utils.str2bool(paste['private']):
-            channels = conf.get('bottle', 'relay_chan')
-
-    # For each channel, send the relay server a message
-    # Note: Irccat does not use traditional channel names
-    if channels:
-        for channel in channels.split(','):
+    # Only relay if paste is not private
+    if conf.get('bottle', 'relay_chan') is not None and not utils.str2bool(paste['private']):
+        # For each channel, send the relay server a message
+        # Note: Irccat uses section names, not channels
+        for section in conf.get('bottle', 'relay_chan').split(','):
             try:
                 s = socket.create_connection((host, port))
-                s.send('{};{};{}\n'.format(channel, pw, message).encode())
+                s.send('{};{};{}\n'.format(section, pw, message).encode())
                 s.close()
             except:
-                print('Unable to send message to channel: {}'.format(channel))
+                print('Unable to send message to {}'.format(section))

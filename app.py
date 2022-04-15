@@ -21,7 +21,6 @@ conf = configparser.ConfigParser({
     'url': '',
     'relay_enabled': True,
     'relay_chan': '',
-    'relay_admin_chan': '',
     'relay_port': 5050,
     'relay_pass': 'nil',
     'recaptcha_sitekey': '',
