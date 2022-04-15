@@ -12,10 +12,15 @@ hilighting features.
 Required Software
 -----------------
 
-Python modules (installable with `pip install`, if you have `pip` installed):  
-`bottle`, `Jinja2`
+Python modules:
 
-Additional Software needed:  [`redis`](http://redis.io/download)
+- python3-cymruwhois
+- python3-bottle
+- python3-redis
+- python3-jinja2
+- python3-pygments
+
+Additional Software needed: [`redis-server`](http://redis.io/download)
 
 Required Files
 --------------
