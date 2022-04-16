@@ -76,7 +76,7 @@ def blacklist_address(cache, addr):
     subnet = _addr_subnet(addr)
     if not subnet:
         return False
-    cache.setex('ipblock:{}'.format(utils.sha512(subnet)), 'nil', 345600)
+    cache.setex('ipblock:{}'.format(utils.sha512(subnet)), 345600, 'nil')
     return True
 
 
@@ -114,7 +114,7 @@ def greylist_address(cache, addr):
     subnet = _addr_subnet(addr)
     if not subnet:
         return False
-    cache.setex('ipgrey:{}'.format(utils.sha512(subnet)), 'nil', 345600)
+    cache.setex('ipgrey:{}'.format(utils.sha512(subnet)), 345600, 'nil')
     return True
 
 

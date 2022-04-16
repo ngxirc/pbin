@@ -109,5 +109,5 @@ def _cmd_greylist_address(cache, data):
 
     # Greylist address
     if sanity.greylist_address(cache, addr):
-        return {'message': 'Added to grey lis.', 'status': 'success'}
+        return {'message': 'Added to grey list.', 'status': 'success'}
     return {'message': 'unexpected error; task already complete?', 'status': 'error'}
