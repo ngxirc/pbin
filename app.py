@@ -120,6 +120,6 @@ def show_info():
 
 
 if __name__ == '__main__':
-    bottle.run(
+    app.run(
         host='0.0.0.0',
         port=conf.getint('bottle', 'port'))
