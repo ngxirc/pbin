@@ -166,7 +166,7 @@ def submit_new(conf, cache):
         return '{}://{}/{}\n'.format(scheme, host, paste_id)
     else:
         # Relay message to IRC
-        if utils.str2bool(conf.get('bottle', 'relay_enabled')) and not sanity.address_greylisted(cache, paste_data['origin_addr']):
+        if utils.str2bool(conf.get('bottle', 'relay_enabled')) and not sanity.address_greylisted(cache, paste_data['origin_addr']) and utils.str2bool(paste_data['private']):
             irc.send_message(conf, cache, paste_data, paste_id)
         bottle.redirect('/' + paste_id)
 
